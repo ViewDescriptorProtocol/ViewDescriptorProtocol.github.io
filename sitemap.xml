@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+    <url>
+         <loc>https://vdprotocol.org/</loc>
+         <lastmod>2026-02-28</lastmod>
+    </url>
+    <url>
+         <loc>https://vdprotocol.org/examples/</loc>
+         <lastmod>2026-02-28</lastmod>
+    </url>
+    <url>
+         <loc>https://vdprotocol.org/related-projects/</loc>
+         <lastmod>2026-02-28</lastmod>
+    </url>
+    <url>
+         <loc>https://vdprotocol.org/schema/</loc>
+         <lastmod>2026-02-28</lastmod>
+    </url>
+    <url>
+         <loc>https://vdprotocol.org/specification/</loc>
+         <lastmod>2026-02-28</lastmod>
+    </url>
+</urlset>

@@ -1,0 +1,2577 @@
+<!DOCTYPE html><html lang="en" class="no-js"><head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Server-driven template binding for cross-platform UI rendering">
+      
+      
+        <meta name="author" content="ViewDescriptorProtocol">
+      
+      
+        <link rel="canonical" href="https://vdprotocol.org/specification/">
+      
+      
+        <link rel="prev" href="..">
+      
+      
+        <link rel="next" href="../schema/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../assets/logo.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.3">
+    
+    
+      
+        <title>Specification - View Descriptor Protocol</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.484c7ddc.min.css">
+      
+        
+        <link rel="stylesheet" href="../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&amp;display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/extra.css">
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  <link href="../assets/stylesheets/glightbox.min.css" rel="stylesheet"><script src="../assets/javascripts/glightbox.min.js"></script><style id="glightbox-style">
+            html.glightbox-open { overflow: initial; height: 100%; }
+            .gslide-title { margin-top: 0px; user-select: text; }
+            .gslide-desc { color: #666; user-select: text; }
+            .gslide-image img { background: white; }
+            .gscrollbar-fixer { padding-right: 15px; }
+            .gdesc-inner { font-size: 0.75rem; }
+            body[data-md-color-scheme="slate"] .gdesc-inner { background: var(--md-default-bg-color); }
+            body[data-md-color-scheme="slate"] .gslide-title { color: var(--md-default-fg-color); }
+            body[data-md-color-scheme="slate"] .gslide-desc { color: var(--md-default-fg-color); }
+        </style></head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="custom" data-md-color-accent="light-blue">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#view-descriptor-protocol-vdp" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href=".." title="View Descriptor Protocol" class="md-header__button md-logo" aria-label="View Descriptor Protocol" data-md-component="logo">
+      
+  <img src="../assets/logo.png" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"></path></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            View Descriptor Protocol
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Specification
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="custom" data-md-color-accent="light-blue" aria-label="Switch to dark mode" type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"></path></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="custom" data-md-color-accent="light-blue" aria-label="Switch to light mode" type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"></path></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"></path></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"></path></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"></path></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"></path></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/ViewDescriptorProtocol/VDP" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"></path></svg>
+  </div>
+  <div class="md-source__repository">
+    ViewDescriptorProtocol/VDP
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href=".." class="md-tabs__link">
+        
+  
+  
+    
+  
+  Home
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+    
+  
+  
+    <li class="md-tabs__item md-tabs__item--active">
+      <a href="./" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Specification
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../schema/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Schema
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../examples/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Examples
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../related-projects/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Related Projects
+
+      </a>
+    </li>
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation">
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href=".." title="View Descriptor Protocol" class="md-nav__button md-logo" aria-label="View Descriptor Protocol" data-md-component="logo">
+      
+  <img src="../assets/logo.png" alt="logo">
+
+    </a>
+    View Descriptor Protocol
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/ViewDescriptorProtocol/VDP" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"></path></svg>
+  </div>
+  <div class="md-source__repository">
+    ViewDescriptorProtocol/VDP
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href=".." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Specification
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Specification
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#abstract" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Abstract
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#1-problem-statement" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Problem Statement
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-terminology" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Terminology
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-view-descriptor-format" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. View Descriptor Format
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="3. View Descriptor Format">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#31-basic-structure-single-template" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.1 Basic Structure (Single Template)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#32-template-composition-slots" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.2 Template Composition (Slots)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#33-recursive-nesting" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.3 Recursive Nesting
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#34-multiple-views" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.4 Multiple Views
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#35-slot-arrays" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.5 Slot Arrays
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#36-formal-grammar" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.6 Formal Grammar
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-transport-mechanisms" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. Transport Mechanisms
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="4. Transport Mechanisms">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#41-http-link-header-standalone-resource" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.1 HTTP Link Header (Standalone Resource)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#42-inline-in-response-body" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.2 Inline in Response Body
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#43-odata4-compatibility" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.3 OData4 Compatibility
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#44-precedence" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.4 Precedence
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5-view-descriptor-resources" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. View Descriptor Resources
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="5. View Descriptor Resources">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#51-media-type" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5.1 Media Type
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#52-caching" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5.2 Caching
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#53-versioning" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5.3 Versioning
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#54-url-resolution" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5.4 URL Resolution
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#55-client-specific-selection" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5.5 Client-Specific Selection
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#6-template-requirements" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6. Template Requirements
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="6. Template Requirements">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#61-framework-slot-mappings" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6.1 Framework Slot Mappings
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#62-static-vs-dynamic-slots" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6.2 Static vs Dynamic Slots
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#7-examples" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7. Examples
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="7. Examples">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#71-login-page-simple-no-slots" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7.1 Login Page (Simple, No Slots)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#72-dashboard-composed-template-tree" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7.2 Dashboard (Composed Template Tree)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#73-odata4-product-list" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7.3 OData4 Product List
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#74-multiple-views-responsive" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7.4 Multiple Views (Responsive)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#75-bff-backend-for-frontend-pattern" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7.5 BFF (Backend for Frontend) Pattern
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#8-client-resolution-algorithm" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        8. Client Resolution Algorithm
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#9-error-handling" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        9. Error Handling
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="9. Error Handling">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#91-template-fetch-failures" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        9.1 Template Fetch Failures
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#92-slot-name-mismatch" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        9.2 Slot Name Mismatch
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#93-invalid-view-descriptor" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        9.3 Invalid View Descriptor
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#94-graceful-degradation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        9.4 Graceful Degradation
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#10-security-considerations" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        10. Security Considerations
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#11-relationship-to-existing-standards" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        11. Relationship to Existing Standards
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#12-iana-considerations" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        12. IANA Considerations
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="12. IANA Considerations">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#121-link-relation-type" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        12.1 Link Relation Type
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#122-media-type" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        12.2 Media Type
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#13-discovery" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        13. Discovery
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="13. Discovery">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#131-options-response" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        13.1 OPTIONS Response
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#132-well-known-uri" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        13.2 Well-Known URI
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#133-openapi-extension" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        13.3 OpenAPI Extension
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#14-partial-updates" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        14. Partial Updates
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="14. Partial Updates">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#141-pattern" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        14.1 Pattern
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#142-slot-level-re-rendering" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        14.2 Slot-Level Re-rendering
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#143-htmx-integration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        14.3 HTMX Integration
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#144-bff-responsibility" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        14.4 BFF Responsibility
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#design-decisions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Design Decisions
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../schema/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Schema
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../examples/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Examples
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../related-projects/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Related Projects
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc">
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#abstract" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Abstract
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#1-problem-statement" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Problem Statement
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-terminology" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Terminology
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-view-descriptor-format" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. View Descriptor Format
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="3. View Descriptor Format">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#31-basic-structure-single-template" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.1 Basic Structure (Single Template)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#32-template-composition-slots" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.2 Template Composition (Slots)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#33-recursive-nesting" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.3 Recursive Nesting
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#34-multiple-views" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.4 Multiple Views
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#35-slot-arrays" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.5 Slot Arrays
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#36-formal-grammar" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.6 Formal Grammar
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-transport-mechanisms" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. Transport Mechanisms
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="4. Transport Mechanisms">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#41-http-link-header-standalone-resource" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.1 HTTP Link Header (Standalone Resource)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#42-inline-in-response-body" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.2 Inline in Response Body
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#43-odata4-compatibility" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.3 OData4 Compatibility
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#44-precedence" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.4 Precedence
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5-view-descriptor-resources" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. View Descriptor Resources
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="5. View Descriptor Resources">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#51-media-type" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5.1 Media Type
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#52-caching" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5.2 Caching
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#53-versioning" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5.3 Versioning
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#54-url-resolution" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5.4 URL Resolution
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#55-client-specific-selection" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5.5 Client-Specific Selection
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#6-template-requirements" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6. Template Requirements
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="6. Template Requirements">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#61-framework-slot-mappings" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6.1 Framework Slot Mappings
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#62-static-vs-dynamic-slots" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6.2 Static vs Dynamic Slots
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#7-examples" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7. Examples
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="7. Examples">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#71-login-page-simple-no-slots" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7.1 Login Page (Simple, No Slots)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#72-dashboard-composed-template-tree" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7.2 Dashboard (Composed Template Tree)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#73-odata4-product-list" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7.3 OData4 Product List
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#74-multiple-views-responsive" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7.4 Multiple Views (Responsive)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#75-bff-backend-for-frontend-pattern" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7.5 BFF (Backend for Frontend) Pattern
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#8-client-resolution-algorithm" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        8. Client Resolution Algorithm
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#9-error-handling" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        9. Error Handling
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="9. Error Handling">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#91-template-fetch-failures" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        9.1 Template Fetch Failures
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#92-slot-name-mismatch" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        9.2 Slot Name Mismatch
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#93-invalid-view-descriptor" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        9.3 Invalid View Descriptor
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#94-graceful-degradation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        9.4 Graceful Degradation
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#10-security-considerations" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        10. Security Considerations
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#11-relationship-to-existing-standards" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        11. Relationship to Existing Standards
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#12-iana-considerations" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        12. IANA Considerations
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="12. IANA Considerations">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#121-link-relation-type" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        12.1 Link Relation Type
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#122-media-type" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        12.2 Media Type
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#13-discovery" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        13. Discovery
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="13. Discovery">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#131-options-response" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        13.1 OPTIONS Response
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#132-well-known-uri" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        13.2 Well-Known URI
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#133-openapi-extension" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        13.3 OpenAPI Extension
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#14-partial-updates" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        14. Partial Updates
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="14. Partial Updates">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#141-pattern" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        14.1 Pattern
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#142-slot-level-re-rendering" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        14.2 Slot-Level Re-rendering
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#143-htmx-integration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        14.3 HTMX Integration
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#144-bff-responsibility" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        14.4 BFF Responsibility
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#design-decisions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Design Decisions
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="view-descriptor-protocol-vdp">View Descriptor Protocol (VDP)<a class="headerlink" href="#view-descriptor-protocol-vdp" title="Permanent link">¶</a></h1>
+<p><strong>Status:</strong> Working Draft
+<strong>Version:</strong> 0.1.0</p>
+<h2 id="abstract">Abstract<a class="headerlink" href="#abstract" title="Permanent link">¶</a></h2>
+<p>The View Descriptor Protocol (VDP) defines a standard mechanism for associating API data responses with the templates that should render them. A <strong>view descriptor</strong> is a JSON structure that identifies a root template by URL and declares how sub-templates compose into named slots, forming a recursive template tree. View descriptors can be transported via HTTP headers (for constrained formats like OData4) or inline in the response body (for flexible formats like HAL+JSON). The protocol is framework-agnostic — templates can be HTML/Qute, SwiftUI views, Compose layouts, or any other rendering format.</p>
+<h2 id="1-problem-statement">1. Problem Statement<a class="headerlink" href="#1-problem-statement" title="Permanent link">¶</a></h2>
+<p>REST APIs return structured data (JSON, XML) that carries no presentation information. The client must independently decide how to render this data — typically by hardcoding template choices into client logic. This creates tight coupling between API consumers and their rendering layer.</p>
+<p><strong>VDP solves this by letting the server declare:</strong>
+- Which template(s) to use for rendering a response
+- How templates compose together (which sub-template fills which slot)</p>
+<p><strong>VDP explicitly does NOT define:</strong>
+- How templates bind to data (that is the template engine's job — Qute expressions, JSONPath, etc.)
+- Styling or CSS class information (that belongs in the template itself)
+- Client-side state management</p>
+<h2 id="2-terminology">2. Terminology<a class="headerlink" href="#2-terminology" title="Permanent link">¶</a></h2>
+<ul>
+<li><strong>View Descriptor</strong>: A JSON object that describes a template tree — a root template URL and its slot assignments.</li>
+<li><strong>Template URL</strong>: A URL identifying a template resource. The URL MUST resolve to a renderable template in the client's rendering framework.</li>
+<li><strong>Slot</strong>: A named insertion point in a template where a sub-template can be composed. Slot names correspond to the template's own insertion point identifiers (e.g., Qute's <code>{#insert slotName}</code>, HTML's <code>&lt;slot name="slotName"&gt;</code>).</li>
+<li><strong>View Descriptor Resource</strong>: A standalone JSON document containing a view descriptor, addressable by its own URL, cacheable independently of the data it describes.</li>
+<li><strong>Static Composition</strong>: Template includes that are hardcoded within the template itself (e.g., a layout always including its <code>_head.html</code> partial). VDP does not manage these — they are the template's internal concern.</li>
+<li><strong>Dynamic Composition</strong>: Template slots whose content varies per API response. VDP manages these.</li>
+</ul>
+<h2 id="3-view-descriptor-format">3. View Descriptor Format<a class="headerlink" href="#3-view-descriptor-format" title="Permanent link">¶</a></h2>
+<h3 id="31-basic-structure-single-template">3.1 Basic Structure (Single Template)<a class="headerlink" href="#31-basic-structure-single-template" title="Permanent link">¶</a></h3>
+<p>The simplest view descriptor points to a single template with no slots:</p>
+<div class="language-json highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="p">{</span>
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="w">  </span><span class="nt">"template"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://example.com/templates/article.html"</span>
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="p">}</span>
+</span></code></pre></div>
+<h3 id="32-template-composition-slots">3.2 Template Composition (Slots)<a class="headerlink" href="#32-template-composition-slots" title="Permanent link">¶</a></h3>
+<p>When a template has named insertion points that should be filled dynamically, the view descriptor declares a <code>slots</code> object. Each key is a slot name matching an insertion point in the template, and each value is itself a view descriptor:</p>
+<div class="language-json highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="p">{</span>
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="w">  </span><span class="nt">"template"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://github.com/SiteNetSoft/quarkus-pha/templates/layouts/sidebar.html"</span><span class="p">,</span>
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="w">  </span><span class="nt">"slots"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="w">    </span><span class="nt">"mainContent"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="w">      </span><span class="nt">"template"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://github.com/SiteNetSoft/quarkus-pha/templates/components/data-display/card.html"</span>
+</span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a><span class="w">    </span><span class="p">},</span>
+</span><span id="__span-1-7"><a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a><span class="w">    </span><span class="nt">"sidebarNav"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-1-8"><a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a><span class="w">      </span><span class="nt">"template"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://github.com/SiteNetSoft/quarkus-pha/templates/components/navigation/nav.html"</span>
+</span><span id="__span-1-9"><a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a><span class="w">    </span><span class="p">}</span>
+</span><span id="__span-1-10"><a id="__codelineno-1-10" name="__codelineno-1-10" href="#__codelineno-1-10"></a><span class="w">  </span><span class="p">}</span>
+</span><span id="__span-1-11"><a id="__codelineno-1-11" name="__codelineno-1-11" href="#__codelineno-1-11"></a><span class="p">}</span>
+</span></code></pre></div>
+<p>This tells the client: "Render <code>sidebar.html</code>, and fill its <code>mainContent</code> slot with <code>card.html</code> and its <code>sidebarNav</code> slot with <code>nav.html</code>."</p>
+<h3 id="33-recursive-nesting">3.3 Recursive Nesting<a class="headerlink" href="#33-recursive-nesting" title="Permanent link">¶</a></h3>
+<p>Since each slot value is itself a view descriptor, composition nests to arbitrary depth:</p>
+<div class="language-json highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="p">{</span>
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="w">  </span><span class="nt">"template"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://github.com/SiteNetSoft/quarkus-pha/templates/layouts/sidebar.html"</span><span class="p">,</span>
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="w">  </span><span class="nt">"slots"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="w">    </span><span class="nt">"mainContent"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a><span class="w">      </span><span class="nt">"template"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://github.com/SiteNetSoft/quarkus-pha/templates/demos/dashboard.html"</span><span class="p">,</span>
+</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a><span class="w">      </span><span class="nt">"slots"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-2-7"><a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a><span class="w">        </span><span class="nt">"statsRow"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-2-8"><a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a><span class="w">          </span><span class="nt">"template"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://github.com/SiteNetSoft/quarkus-pha/templates/components/data-display/card.html"</span>
+</span><span id="__span-2-9"><a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a><span class="w">        </span><span class="p">},</span>
+</span><span id="__span-2-10"><a id="__codelineno-2-10" name="__codelineno-2-10" href="#__codelineno-2-10"></a><span class="w">        </span><span class="nt">"activityTable"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-2-11"><a id="__codelineno-2-11" name="__codelineno-2-11" href="#__codelineno-2-11"></a><span class="w">          </span><span class="nt">"template"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://github.com/SiteNetSoft/quarkus-pha/templates/components/data-display/table.html"</span>
+</span><span id="__span-2-12"><a id="__codelineno-2-12" name="__codelineno-2-12" href="#__codelineno-2-12"></a><span class="w">        </span><span class="p">},</span>
+</span><span id="__span-2-13"><a id="__codelineno-2-13" name="__codelineno-2-13" href="#__codelineno-2-13"></a><span class="w">        </span><span class="nt">"chart"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-2-14"><a id="__codelineno-2-14" name="__codelineno-2-14" href="#__codelineno-2-14"></a><span class="w">          </span><span class="nt">"template"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://github.com/SiteNetSoft/quarkus-pha/templates/components/charts/chart.html"</span><span class="p">,</span>
+</span><span id="__span-2-15"><a id="__codelineno-2-15" name="__codelineno-2-15" href="#__codelineno-2-15"></a><span class="w">          </span><span class="nt">"slots"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-2-16"><a id="__codelineno-2-16" name="__codelineno-2-16" href="#__codelineno-2-16"></a><span class="w">            </span><span class="nt">"legend"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-2-17"><a id="__codelineno-2-17" name="__codelineno-2-17" href="#__codelineno-2-17"></a><span class="w">              </span><span class="nt">"template"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://github.com/SiteNetSoft/quarkus-pha/templates/components/charts/chart-legend.html"</span>
+</span><span id="__span-2-18"><a id="__codelineno-2-18" name="__codelineno-2-18" href="#__codelineno-2-18"></a><span class="w">            </span><span class="p">}</span>
+</span><span id="__span-2-19"><a id="__codelineno-2-19" name="__codelineno-2-19" href="#__codelineno-2-19"></a><span class="w">          </span><span class="p">}</span>
+</span><span id="__span-2-20"><a id="__codelineno-2-20" name="__codelineno-2-20" href="#__codelineno-2-20"></a><span class="w">        </span><span class="p">}</span>
+</span><span id="__span-2-21"><a id="__codelineno-2-21" name="__codelineno-2-21" href="#__codelineno-2-21"></a><span class="w">      </span><span class="p">}</span>
+</span><span id="__span-2-22"><a id="__codelineno-2-22" name="__codelineno-2-22" href="#__codelineno-2-22"></a><span class="w">    </span><span class="p">},</span>
+</span><span id="__span-2-23"><a id="__codelineno-2-23" name="__codelineno-2-23" href="#__codelineno-2-23"></a><span class="w">    </span><span class="nt">"sidebarNav"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-2-24"><a id="__codelineno-2-24" name="__codelineno-2-24" href="#__codelineno-2-24"></a><span class="w">      </span><span class="nt">"template"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://github.com/SiteNetSoft/quarkus-pha/templates/components/navigation/nav.html"</span>
+</span><span id="__span-2-25"><a id="__codelineno-2-25" name="__codelineno-2-25" href="#__codelineno-2-25"></a><span class="w">    </span><span class="p">}</span>
+</span><span id="__span-2-26"><a id="__codelineno-2-26" name="__codelineno-2-26" href="#__codelineno-2-26"></a><span class="w">  </span><span class="p">}</span>
+</span><span id="__span-2-27"><a id="__codelineno-2-27" name="__codelineno-2-27" href="#__codelineno-2-27"></a><span class="p">}</span>
+</span></code></pre></div>
+<h3 id="34-multiple-views">3.4 Multiple Views<a class="headerlink" href="#34-multiple-views" title="Permanent link">¶</a></h3>
+<p>A single API response may offer multiple views (e.g., a summary view and a detail view, or views for different device classes). Use a named object at the top level:</p>
+<div class="language-json highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="p">{</span>
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="w">  </span><span class="nt">"views"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="w">    </span><span class="nt">"default"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="w">      </span><span class="nt">"template"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://example.com/templates/product-detail.html"</span>
+</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a><span class="w">    </span><span class="p">},</span>
+</span><span id="__span-3-6"><a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a><span class="w">    </span><span class="nt">"compact"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-3-7"><a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a><span class="w">      </span><span class="nt">"template"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://example.com/templates/product-card.html"</span>
+</span><span id="__span-3-8"><a id="__codelineno-3-8" name="__codelineno-3-8" href="#__codelineno-3-8"></a><span class="w">    </span><span class="p">},</span>
+</span><span id="__span-3-9"><a id="__codelineno-3-9" name="__codelineno-3-9" href="#__codelineno-3-9"></a><span class="w">    </span><span class="nt">"mobile"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-3-10"><a id="__codelineno-3-10" name="__codelineno-3-10" href="#__codelineno-3-10"></a><span class="w">      </span><span class="nt">"template"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://example.com/templates/product-mobile.html"</span><span class="p">,</span>
+</span><span id="__span-3-11"><a id="__codelineno-3-11" name="__codelineno-3-11" href="#__codelineno-3-11"></a><span class="w">      </span><span class="nt">"slots"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-3-12"><a id="__codelineno-3-12" name="__codelineno-3-12" href="#__codelineno-3-12"></a><span class="w">        </span><span class="nt">"gallery"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-3-13"><a id="__codelineno-3-13" name="__codelineno-3-13" href="#__codelineno-3-13"></a><span class="w">          </span><span class="nt">"template"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://example.com/templates/components/swipe-gallery.html"</span>
+</span><span id="__span-3-14"><a id="__codelineno-3-14" name="__codelineno-3-14" href="#__codelineno-3-14"></a><span class="w">        </span><span class="p">}</span>
+</span><span id="__span-3-15"><a id="__codelineno-3-15" name="__codelineno-3-15" href="#__codelineno-3-15"></a><span class="w">      </span><span class="p">}</span>
+</span><span id="__span-3-16"><a id="__codelineno-3-16" name="__codelineno-3-16" href="#__codelineno-3-16"></a><span class="w">    </span><span class="p">}</span>
+</span><span id="__span-3-17"><a id="__codelineno-3-17" name="__codelineno-3-17" href="#__codelineno-3-17"></a><span class="w">  </span><span class="p">}</span>
+</span><span id="__span-3-18"><a id="__codelineno-3-18" name="__codelineno-3-18" href="#__codelineno-3-18"></a><span class="p">}</span>
+</span></code></pre></div>
+<p>When only a single view is needed, the top-level object IS the view descriptor (no <code>views</code> wrapper). When multiple views are present, the <code>views</code> key wraps them. A client SHOULD use <code>default</code> when no specific view is requested.</p>
+<h3 id="35-slot-arrays">3.5 Slot Arrays<a class="headerlink" href="#35-slot-arrays" title="Permanent link">¶</a></h3>
+<p>A single slot can accept multiple templates, rendered in sequence within the insertion point. This is useful when composing multiple independent components into a single region:</p>
+<div class="language-json highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="p">{</span>
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="w">  </span><span class="nt">"template"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://github.com/SiteNetSoft/quarkus-pha/templates/layouts/sidebar.html"</span><span class="p">,</span>
+</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a><span class="w">  </span><span class="nt">"slots"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a><span class="w">    </span><span class="nt">"mainContent"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+</span><span id="__span-4-5"><a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a><span class="w">      </span><span class="p">{</span>
+</span><span id="__span-4-6"><a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a><span class="w">        </span><span class="nt">"template"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://github.com/SiteNetSoft/quarkus-pha/templates/components/data-display/card.html"</span>
+</span><span id="__span-4-7"><a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a><span class="w">      </span><span class="p">},</span>
+</span><span id="__span-4-8"><a id="__codelineno-4-8" name="__codelineno-4-8" href="#__codelineno-4-8"></a><span class="w">      </span><span class="p">{</span>
+</span><span id="__span-4-9"><a id="__codelineno-4-9" name="__codelineno-4-9" href="#__codelineno-4-9"></a><span class="w">        </span><span class="nt">"template"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://github.com/SiteNetSoft/quarkus-pha/templates/components/charts/chart.html"</span>
+</span><span id="__span-4-10"><a id="__codelineno-4-10" name="__codelineno-4-10" href="#__codelineno-4-10"></a><span class="w">      </span><span class="p">},</span>
+</span><span id="__span-4-11"><a id="__codelineno-4-11" name="__codelineno-4-11" href="#__codelineno-4-11"></a><span class="w">      </span><span class="p">{</span>
+</span><span id="__span-4-12"><a id="__codelineno-4-12" name="__codelineno-4-12" href="#__codelineno-4-12"></a><span class="w">        </span><span class="nt">"template"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://github.com/SiteNetSoft/quarkus-pha/templates/components/data-display/table.html"</span>
+</span><span id="__span-4-13"><a id="__codelineno-4-13" name="__codelineno-4-13" href="#__codelineno-4-13"></a><span class="w">      </span><span class="p">}</span>
+</span><span id="__span-4-14"><a id="__codelineno-4-14" name="__codelineno-4-14" href="#__codelineno-4-14"></a><span class="w">    </span><span class="p">],</span>
+</span><span id="__span-4-15"><a id="__codelineno-4-15" name="__codelineno-4-15" href="#__codelineno-4-15"></a><span class="w">    </span><span class="nt">"sidebarNav"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-4-16"><a id="__codelineno-4-16" name="__codelineno-4-16" href="#__codelineno-4-16"></a><span class="w">      </span><span class="nt">"template"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://github.com/SiteNetSoft/quarkus-pha/templates/components/navigation/nav.html"</span>
+</span><span id="__span-4-17"><a id="__codelineno-4-17" name="__codelineno-4-17" href="#__codelineno-4-17"></a><span class="w">    </span><span class="p">}</span>
+</span><span id="__span-4-18"><a id="__codelineno-4-18" name="__codelineno-4-18" href="#__codelineno-4-18"></a><span class="w">  </span><span class="p">}</span>
+</span><span id="__span-4-19"><a id="__codelineno-4-19" name="__codelineno-4-19" href="#__codelineno-4-19"></a><span class="p">}</span>
+</span></code></pre></div>
+<p>Each element in the array is a full view descriptor and can itself have nested <code>slots</code>. The client MUST render array elements in order.</p>
+<h3 id="36-formal-grammar">3.6 Formal Grammar<a class="headerlink" href="#36-formal-grammar" title="Permanent link">¶</a></h3>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>ViewDescriptor      = { "template": TemplateURL, "slots"?: Slots }
+</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>TemplateURL         = URI (RFC 3986)
+</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a>Slots               = { SlotName: SlotValue, ... }
+</span><span id="__span-5-4"><a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a>SlotName            = string (matches an insertion point in the template)
+</span><span id="__span-5-5"><a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a>SlotValue           = ViewDescriptor | ViewDescriptor[]
+</span><span id="__span-5-6"><a id="__codelineno-5-6" name="__codelineno-5-6" href="#__codelineno-5-6"></a>
+</span><span id="__span-5-7"><a id="__codelineno-5-7" name="__codelineno-5-7" href="#__codelineno-5-7"></a>MultiViewDescriptor = { "views": { ViewName: ViewDescriptor, ... } }
+</span><span id="__span-5-8"><a id="__codelineno-5-8" name="__codelineno-5-8" href="#__codelineno-5-8"></a>ViewName            = string
+</span></code></pre></div>
+<p>A valid VDP payload is either a <code>ViewDescriptor</code> or a <code>MultiViewDescriptor</code>.</p>
+<h2 id="4-transport-mechanisms">4. Transport Mechanisms<a class="headerlink" href="#4-transport-mechanisms" title="Permanent link">¶</a></h2>
+<p>VDP supports two transport modes. Servers MAY use either or both.</p>
+<h3 id="41-http-link-header-standalone-resource">4.1 HTTP Link Header (Standalone Resource)<a class="headerlink" href="#41-http-link-header-standalone-resource" title="Permanent link">¶</a></h3>
+<p>The server responds with a <code>Link</code> header pointing to a view descriptor resource:</p>
+<div class="language-http highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="kr">HTTP</span><span class="o">/</span><span class="m">1.1</span> <span class="m">200</span> <span class="ne">OK</span>
+</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a><span class="na">Content-Type</span><span class="o">:</span> <span class="l">application/json</span>
+</span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a><span class="na">Link</span><span class="o">:</span> <span class="l">&lt;https://example.com/views/dashboard.json&gt;; rel="view-descriptor"</span>
+</span><span id="__span-6-4"><a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a>
+</span><span id="__span-6-5"><a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a><span class="p">{</span><span class="nt">"revenue"</span><span class="p">:</span><span class="w"> </span><span class="mi">48200</span><span class="p">,</span><span class="w"> </span><span class="nt">"users"</span><span class="p">:</span><span class="w"> </span><span class="mi">1847</span><span class="p">,</span><span class="w"> </span><span class="nt">"orders"</span><span class="p">:</span><span class="w"> </span><span class="mi">312</span><span class="p">}</span>
+</span></code></pre></div>
+<p>The client fetches <code>https://example.com/views/dashboard.json</code> to get the view descriptor. This approach:</p>
+<ul>
+<li>Keeps the data payload completely clean</li>
+<li>Works with <strong>any</strong> data format (JSON, XML, OData4, GraphQL, Protocol Buffers)</li>
+<li>The view descriptor resource is independently cacheable</li>
+<li>Uses existing web standards (RFC 8288 Link Relations)</li>
+</ul>
+<p><strong>For simple cases</strong> (single template, no composition), a shorthand header is also defined:</p>
+<div class="language-http highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="err">View-Template: https://example.com/templates/article.html</span>
+</span></code></pre></div>
+<p>When <code>View-Template</code> is present, it is equivalent to <code>{"template": "&lt;URL&gt;"}</code>. If both <code>Link</code> (with <code>rel="view-descriptor"</code>) and <code>View-Template</code> are present, the <code>Link</code> header takes precedence.</p>
+<h3 id="42-inline-in-response-body">4.2 Inline in Response Body<a class="headerlink" href="#42-inline-in-response-body" title="Permanent link">¶</a></h3>
+<p>When the data format is flexible (e.g., HAL+JSON, custom APIs), embed the view descriptor directly using the <code>_view</code> key:</p>
+<div class="language-json highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="p">{</span>
+</span><span id="__span-8-2"><a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a><span class="w">  </span><span class="nt">"_links"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-8-3"><a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a><span class="w">    </span><span class="nt">"self"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nt">"href"</span><span class="p">:</span><span class="w"> </span><span class="s2">"/api/dashboard"</span><span class="w"> </span><span class="p">}</span>
+</span><span id="__span-8-4"><a id="__codelineno-8-4" name="__codelineno-8-4" href="#__codelineno-8-4"></a><span class="w">  </span><span class="p">},</span>
+</span><span id="__span-8-5"><a id="__codelineno-8-5" name="__codelineno-8-5" href="#__codelineno-8-5"></a><span class="w">  </span><span class="nt">"_view"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-8-6"><a id="__codelineno-8-6" name="__codelineno-8-6" href="#__codelineno-8-6"></a><span class="w">    </span><span class="nt">"template"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://github.com/SiteNetSoft/quarkus-pha/templates/demos/dashboard.html"</span><span class="p">,</span>
+</span><span id="__span-8-7"><a id="__codelineno-8-7" name="__codelineno-8-7" href="#__codelineno-8-7"></a><span class="w">    </span><span class="nt">"slots"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-8-8"><a id="__codelineno-8-8" name="__codelineno-8-8" href="#__codelineno-8-8"></a><span class="w">      </span><span class="nt">"statsRow"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-8-9"><a id="__codelineno-8-9" name="__codelineno-8-9" href="#__codelineno-8-9"></a><span class="w">        </span><span class="nt">"template"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://github.com/SiteNetSoft/quarkus-pha/templates/components/data-display/card.html"</span>
+</span><span id="__span-8-10"><a id="__codelineno-8-10" name="__codelineno-8-10" href="#__codelineno-8-10"></a><span class="w">      </span><span class="p">}</span>
+</span><span id="__span-8-11"><a id="__codelineno-8-11" name="__codelineno-8-11" href="#__codelineno-8-11"></a><span class="w">    </span><span class="p">}</span>
+</span><span id="__span-8-12"><a id="__codelineno-8-12" name="__codelineno-8-12" href="#__codelineno-8-12"></a><span class="w">  </span><span class="p">},</span>
+</span><span id="__span-8-13"><a id="__codelineno-8-13" name="__codelineno-8-13" href="#__codelineno-8-13"></a><span class="w">  </span><span class="nt">"revenue"</span><span class="p">:</span><span class="w"> </span><span class="mi">48200</span><span class="p">,</span>
+</span><span id="__span-8-14"><a id="__codelineno-8-14" name="__codelineno-8-14" href="#__codelineno-8-14"></a><span class="w">  </span><span class="nt">"users"</span><span class="p">:</span><span class="w"> </span><span class="mi">1847</span><span class="p">,</span>
+</span><span id="__span-8-15"><a id="__codelineno-8-15" name="__codelineno-8-15" href="#__codelineno-8-15"></a><span class="w">  </span><span class="nt">"orders"</span><span class="p">:</span><span class="w"> </span><span class="mi">312</span>
+</span><span id="__span-8-16"><a id="__codelineno-8-16" name="__codelineno-8-16" href="#__codelineno-8-16"></a><span class="p">}</span>
+</span></code></pre></div>
+<p>The <code>_view</code> key follows HAL's underscore convention for protocol-level metadata.</p>
+<p>For <strong>multiple views</strong>, use <code>_views</code>:</p>
+<div class="language-json highlight"><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a><span class="p">{</span>
+</span><span id="__span-9-2"><a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a><span class="w">  </span><span class="nt">"_views"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-9-3"><a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a><span class="w">    </span><span class="nt">"default"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-9-4"><a id="__codelineno-9-4" name="__codelineno-9-4" href="#__codelineno-9-4"></a><span class="w">      </span><span class="nt">"template"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://example.com/templates/dashboard-full.html"</span><span class="p">,</span>
+</span><span id="__span-9-5"><a id="__codelineno-9-5" name="__codelineno-9-5" href="#__codelineno-9-5"></a><span class="w">      </span><span class="nt">"slots"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nt">"..."</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"..."</span><span class="w"> </span><span class="p">}</span>
+</span><span id="__span-9-6"><a id="__codelineno-9-6" name="__codelineno-9-6" href="#__codelineno-9-6"></a><span class="w">    </span><span class="p">},</span>
+</span><span id="__span-9-7"><a id="__codelineno-9-7" name="__codelineno-9-7" href="#__codelineno-9-7"></a><span class="w">    </span><span class="nt">"widget"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-9-8"><a id="__codelineno-9-8" name="__codelineno-9-8" href="#__codelineno-9-8"></a><span class="w">      </span><span class="nt">"template"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://example.com/templates/dashboard-widget.html"</span>
+</span><span id="__span-9-9"><a id="__codelineno-9-9" name="__codelineno-9-9" href="#__codelineno-9-9"></a><span class="w">    </span><span class="p">}</span>
+</span><span id="__span-9-10"><a id="__codelineno-9-10" name="__codelineno-9-10" href="#__codelineno-9-10"></a><span class="w">  </span><span class="p">},</span>
+</span><span id="__span-9-11"><a id="__codelineno-9-11" name="__codelineno-9-11" href="#__codelineno-9-11"></a><span class="w">  </span><span class="nt">"revenue"</span><span class="p">:</span><span class="w"> </span><span class="mi">48200</span><span class="p">,</span>
+</span><span id="__span-9-12"><a id="__codelineno-9-12" name="__codelineno-9-12" href="#__codelineno-9-12"></a><span class="w">  </span><span class="nt">"users"</span><span class="p">:</span><span class="w"> </span><span class="mi">1847</span>
+</span><span id="__span-9-13"><a id="__codelineno-9-13" name="__codelineno-9-13" href="#__codelineno-9-13"></a><span class="p">}</span>
+</span></code></pre></div>
+<h3 id="43-odata4-compatibility">4.3 OData4 Compatibility<a class="headerlink" href="#43-odata4-compatibility" title="Permanent link">¶</a></h3>
+<p>OData4 responses have a rigid structure but support custom instance annotations. Use an annotation to reference a view descriptor resource:</p>
+<div class="language-json highlight"><pre><span></span><code><span id="__span-10-1"><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a><span class="p">{</span>
+</span><span id="__span-10-2"><a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a><span class="w">  </span><span class="nt">"@odata.context"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://example.com/odata/$metadata#Products"</span><span class="p">,</span>
+</span><span id="__span-10-3"><a id="__codelineno-10-3" name="__codelineno-10-3" href="#__codelineno-10-3"></a><span class="w">  </span><span class="nt">"@View.descriptor"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://example.com/views/product-list.json"</span><span class="p">,</span>
+</span><span id="__span-10-4"><a id="__codelineno-10-4" name="__codelineno-10-4" href="#__codelineno-10-4"></a><span class="w">  </span><span class="nt">"value"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+</span><span id="__span-10-5"><a id="__codelineno-10-5" name="__codelineno-10-5" href="#__codelineno-10-5"></a><span class="w">    </span><span class="p">{</span><span class="w"> </span><span class="nt">"ProductID"</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="nt">"Name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Widget"</span><span class="p">,</span><span class="w"> </span><span class="nt">"Price"</span><span class="p">:</span><span class="w"> </span><span class="mf">9.99</span><span class="w"> </span><span class="p">},</span>
+</span><span id="__span-10-6"><a id="__codelineno-10-6" name="__codelineno-10-6" href="#__codelineno-10-6"></a><span class="w">    </span><span class="p">{</span><span class="w"> </span><span class="nt">"ProductID"</span><span class="p">:</span><span class="w"> </span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="nt">"Name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Gadget"</span><span class="p">,</span><span class="w"> </span><span class="nt">"Price"</span><span class="p">:</span><span class="w"> </span><span class="mf">24.99</span><span class="w"> </span><span class="p">}</span>
+</span><span id="__span-10-7"><a id="__codelineno-10-7" name="__codelineno-10-7" href="#__codelineno-10-7"></a><span class="w">  </span><span class="p">]</span>
+</span><span id="__span-10-8"><a id="__codelineno-10-8" name="__codelineno-10-8" href="#__codelineno-10-8"></a><span class="p">}</span>
+</span></code></pre></div>
+<p>Alternatively, use the <code>Link</code> header approach (Section 4.1) to avoid touching the OData body entirely.</p>
+<h3 id="44-precedence">4.4 Precedence<a class="headerlink" href="#44-precedence" title="Permanent link">¶</a></h3>
+<p>When a view descriptor is provided via multiple mechanisms, precedence is:</p>
+<ol>
+<li>Inline body (<code>_view</code> / <code>_views</code>) — most specific</li>
+<li><code>Link</code> header with <code>rel="view-descriptor"</code></li>
+<li><code>View-Template</code> header</li>
+</ol>
+<h2 id="5-view-descriptor-resources">5. View Descriptor Resources<a class="headerlink" href="#5-view-descriptor-resources" title="Permanent link">¶</a></h2>
+<h3 id="51-media-type">5.1 Media Type<a class="headerlink" href="#51-media-type" title="Permanent link">¶</a></h3>
+<p>View descriptor resources SHOULD be served with:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-11-1"><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a>Content-Type: application/vdp+json
+</span></code></pre></div>
+<h3 id="52-caching">5.2 Caching<a class="headerlink" href="#52-caching" title="Permanent link">¶</a></h3>
+<p>View descriptor resources are independently cacheable. Servers SHOULD provide standard HTTP caching headers:</p>
+<div class="language-http highlight"><pre><span></span><code><span id="__span-12-1"><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a><span class="kr">HTTP</span><span class="o">/</span><span class="m">1.1</span> <span class="m">200</span> <span class="ne">OK</span>
+</span><span id="__span-12-2"><a id="__codelineno-12-2" name="__codelineno-12-2" href="#__codelineno-12-2"></a><span class="na">Content-Type</span><span class="o">:</span> <span class="l">application/vdp+json</span>
+</span><span id="__span-12-3"><a id="__codelineno-12-3" name="__codelineno-12-3" href="#__codelineno-12-3"></a><span class="na">Cache-Control</span><span class="o">:</span> <span class="l">public, max-age=3600</span>
+</span><span id="__span-12-4"><a id="__codelineno-12-4" name="__codelineno-12-4" href="#__codelineno-12-4"></a><span class="na">ETag</span><span class="o">:</span> <span class="l">"v2-dashboard"</span>
+</span><span id="__span-12-5"><a id="__codelineno-12-5" name="__codelineno-12-5" href="#__codelineno-12-5"></a>
+</span><span id="__span-12-6"><a id="__codelineno-12-6" name="__codelineno-12-6" href="#__codelineno-12-6"></a><span class="p">{</span>
+</span><span id="__span-12-7"><a id="__codelineno-12-7" name="__codelineno-12-7" href="#__codelineno-12-7"></a><span class="w">  </span><span class="nt">"template"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://example.com/templates/dashboard.html"</span><span class="p">,</span>
+</span><span id="__span-12-8"><a id="__codelineno-12-8" name="__codelineno-12-8" href="#__codelineno-12-8"></a><span class="w">  </span><span class="nt">"slots"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nt">"..."</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"..."</span><span class="w"> </span><span class="p">}</span>
+</span><span id="__span-12-9"><a id="__codelineno-12-9" name="__codelineno-12-9" href="#__codelineno-12-9"></a><span class="p">}</span>
+</span></code></pre></div>
+<p>Template URLs themselves are also cacheable resources. Clients SHOULD cache resolved templates according to their HTTP caching headers.</p>
+<h3 id="53-versioning">5.3 Versioning<a class="headerlink" href="#53-versioning" title="Permanent link">¶</a></h3>
+<p>View descriptors can be versioned by URL convention:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-13-1"><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a>https://example.com/views/v2/dashboard.json
+</span><span id="__span-13-2"><a id="__codelineno-13-2" name="__codelineno-13-2" href="#__codelineno-13-2"></a>https://example.com/views/dashboard.json?v=2
+</span></code></pre></div>
+<p>Or by content negotiation using the <code>Accept</code> header with a version parameter:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-14-1"><a id="__codelineno-14-1" name="__codelineno-14-1" href="#__codelineno-14-1"></a>Accept: application/vdp+json; version=2
+</span></code></pre></div>
+<h3 id="54-url-resolution">5.4 URL Resolution<a class="headerlink" href="#54-url-resolution" title="Permanent link">¶</a></h3>
+<p>Template URLs in a view descriptor MAY be relative references (RFC 3986 Section 4.2). Clients MUST resolve relative URLs using the following base URL, in order of precedence:</p>
+<ol>
+<li><strong>Standalone view descriptor resource</strong>: The URL of the view descriptor resource itself (i.e., the URL used to fetch it via the <code>Link</code> header).</li>
+<li><strong>Inline transport</strong> (<code>_view</code> / <code>_views</code>): The URL of the API response containing the view descriptor.</li>
+</ol>
+<p>Nested slot template URLs resolve against the same base URL as the root template URL — the base does not change at each nesting level.</p>
+<p><strong>Example:</strong></p>
+<p>Given an API response at <code>https://example.com/api/dashboard</code> with an inline view descriptor:</p>
+<div class="language-json highlight"><pre><span></span><code><span id="__span-15-1"><a id="__codelineno-15-1" name="__codelineno-15-1" href="#__codelineno-15-1"></a><span class="p">{</span>
+</span><span id="__span-15-2"><a id="__codelineno-15-2" name="__codelineno-15-2" href="#__codelineno-15-2"></a><span class="w">  </span><span class="nt">"_view"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-15-3"><a id="__codelineno-15-3" name="__codelineno-15-3" href="#__codelineno-15-3"></a><span class="w">    </span><span class="nt">"template"</span><span class="p">:</span><span class="w"> </span><span class="s2">"templates/layouts/sidebar.html"</span><span class="p">,</span>
+</span><span id="__span-15-4"><a id="__codelineno-15-4" name="__codelineno-15-4" href="#__codelineno-15-4"></a><span class="w">    </span><span class="nt">"slots"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-15-5"><a id="__codelineno-15-5" name="__codelineno-15-5" href="#__codelineno-15-5"></a><span class="w">      </span><span class="nt">"mainContent"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-15-6"><a id="__codelineno-15-6" name="__codelineno-15-6" href="#__codelineno-15-6"></a><span class="w">        </span><span class="nt">"template"</span><span class="p">:</span><span class="w"> </span><span class="s2">"templates/components/card.html"</span>
+</span><span id="__span-15-7"><a id="__codelineno-15-7" name="__codelineno-15-7" href="#__codelineno-15-7"></a><span class="w">      </span><span class="p">}</span>
+</span><span id="__span-15-8"><a id="__codelineno-15-8" name="__codelineno-15-8" href="#__codelineno-15-8"></a><span class="w">    </span><span class="p">}</span>
+</span><span id="__span-15-9"><a id="__codelineno-15-9" name="__codelineno-15-9" href="#__codelineno-15-9"></a><span class="w">  </span><span class="p">}</span>
+</span><span id="__span-15-10"><a id="__codelineno-15-10" name="__codelineno-15-10" href="#__codelineno-15-10"></a><span class="p">}</span>
+</span></code></pre></div>
+<p>Both template URLs resolve against <code>https://example.com/api/dashboard</code>:
+- <code>templates/layouts/sidebar.html</code> → <code>https://example.com/templates/layouts/sidebar.html</code>
+- <code>templates/components/card.html</code> → <code>https://example.com/templates/components/card.html</code></p>
+<p>Servers SHOULD use absolute URLs when view descriptors may be consumed by multiple clients with different base URL contexts.</p>
+<h3 id="55-client-specific-selection">5.5 Client-Specific Selection<a class="headerlink" href="#55-client-specific-selection" title="Permanent link">¶</a></h3>
+<p>When different clients require different templates (e.g., HTML for web, Compose for Android, SwiftUI for iOS), the server SHOULD use standard HTTP content negotiation to select the appropriate view descriptor. VDP does not define a mechanism for shipping multiple platform variants in a single response — the server selects and returns one view descriptor per request.</p>
+<p>Servers MAY use the <code>Accept</code> header, custom headers, or query parameters to determine the client's rendering platform:</p>
+<div class="language-http highlight"><pre><span></span><code><span id="__span-16-1"><a id="__codelineno-16-1" name="__codelineno-16-1" href="#__codelineno-16-1"></a><span class="nf">GET</span> <span class="nn">/api/dashboard</span> <span class="kr">HTTP</span><span class="o">/</span><span class="m">1.1</span>
+</span><span id="__span-16-2"><a id="__codelineno-16-2" name="__codelineno-16-2" href="#__codelineno-16-2"></a><span class="na">Accept</span><span class="o">:</span> <span class="l">application/vdp+json</span>
+</span><span id="__span-16-3"><a id="__codelineno-16-3" name="__codelineno-16-3" href="#__codelineno-16-3"></a><span class="na">X-VDP-Platform</span><span class="o">:</span> <span class="l">android</span>
+</span></code></pre></div>
+<p>This keeps view descriptors small and avoids pushing selection logic into clients.</p>
+<h2 id="6-template-requirements">6. Template Requirements<a class="headerlink" href="#6-template-requirements" title="Permanent link">¶</a></h2>
+<p>VDP is agnostic to the template language. However, templates used with VDP MUST satisfy one requirement: <strong>named insertion points (slots) that can be filled externally</strong>.</p>
+<h3 id="61-framework-slot-mappings">6.1 Framework Slot Mappings<a class="headerlink" href="#61-framework-slot-mappings" title="Permanent link">¶</a></h3>
+<table>
+<thead>
+<tr>
+<th>Framework</th>
+<th>Slot Mechanism</th>
+<th>Example</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Qute</td>
+<td><code>{#insert slotName}{/insert}</code></td>
+<td><code>{#insert mainContent}Default{/insert}</code></td>
+</tr>
+<tr>
+<td>HTML <code>&lt;template&gt;</code></td>
+<td><code>&lt;slot name="slotName"&gt;</code></td>
+<td><code>&lt;slot name="mainContent"&gt;&lt;/slot&gt;</code></td>
+</tr>
+<tr>
+<td>HTMT</td>
+<td><code>ht-template="slotName"</code></td>
+<td><code>&lt;div ht-template="mainContent"&gt;&lt;/div&gt;</code></td>
+</tr>
+<tr>
+<td>Thymeleaf</td>
+<td><code>th:fragment</code> / <code>th:replace</code></td>
+<td><code>&lt;div th:replace="~{slotName}"&gt;&lt;/div&gt;</code></td>
+</tr>
+<tr>
+<td>JSX/React</td>
+<td><code>props.children</code> or named props</td>
+<td><code>{props.mainContent}</code></td>
+</tr>
+<tr>
+<td>SwiftUI</td>
+<td><code>@ViewBuilder</code> parameters</td>
+<td><code>var mainContent: () -&gt; Content</code></td>
+</tr>
+<tr>
+<td>Jetpack Compose</td>
+<td><code>@Composable</code> slot parameters</td>
+<td><code>mainContent: @Composable () -&gt; Unit</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="62-static-vs-dynamic-slots">6.2 Static vs Dynamic Slots<a class="headerlink" href="#62-static-vs-dynamic-slots" title="Permanent link">¶</a></h3>
+<p>Not all insertion points in a template need to be managed by VDP. Templates commonly include static partials (like a shared <code>_head.html</code> or a footer) that are hardcoded. Only slots that vary per API response need to appear in the view descriptor.</p>
+<h2 id="7-examples">7. Examples<a class="headerlink" href="#7-examples" title="Permanent link">¶</a></h2>
+<h3 id="71-login-page-simple-no-slots">7.1 Login Page (Simple, No Slots)<a class="headerlink" href="#71-login-page-simple-no-slots" title="Permanent link">¶</a></h3>
+<p><strong>API Response:</strong></p>
+<div class="language-http highlight"><pre><span></span><code><span id="__span-17-1"><a id="__codelineno-17-1" name="__codelineno-17-1" href="#__codelineno-17-1"></a><span class="kr">HTTP</span><span class="o">/</span><span class="m">1.1</span> <span class="m">200</span> <span class="ne">OK</span>
+</span><span id="__span-17-2"><a id="__codelineno-17-2" name="__codelineno-17-2" href="#__codelineno-17-2"></a><span class="na">Content-Type</span><span class="o">:</span> <span class="l">application/json</span>
+</span><span id="__span-17-3"><a id="__codelineno-17-3" name="__codelineno-17-3" href="#__codelineno-17-3"></a><span class="na">View-Template</span><span class="o">:</span> <span class="l">https://github.com/SiteNetSoft/quarkus-pha/templates/components/forms/form.html</span>
+</span><span id="__span-17-4"><a id="__codelineno-17-4" name="__codelineno-17-4" href="#__codelineno-17-4"></a>
+</span><span id="__span-17-5"><a id="__codelineno-17-5" name="__codelineno-17-5" href="#__codelineno-17-5"></a><span class="p">{</span>
+</span><span id="__span-17-6"><a id="__codelineno-17-6" name="__codelineno-17-6" href="#__codelineno-17-6"></a><span class="w">  </span><span class="nt">"csrfToken"</span><span class="p">:</span><span class="w"> </span><span class="s2">"abc123"</span><span class="p">,</span>
+</span><span id="__span-17-7"><a id="__codelineno-17-7" name="__codelineno-17-7" href="#__codelineno-17-7"></a><span class="w">  </span><span class="nt">"loginUrl"</span><span class="p">:</span><span class="w"> </span><span class="s2">"/auth/login"</span><span class="p">,</span>
+</span><span id="__span-17-8"><a id="__codelineno-17-8" name="__codelineno-17-8" href="#__codelineno-17-8"></a><span class="w">  </span><span class="nt">"fields"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+</span><span id="__span-17-9"><a id="__codelineno-17-9" name="__codelineno-17-9" href="#__codelineno-17-9"></a><span class="w">    </span><span class="p">{</span><span class="w"> </span><span class="nt">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"username"</span><span class="p">,</span><span class="w"> </span><span class="nt">"type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"text"</span><span class="p">,</span><span class="w"> </span><span class="nt">"label"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Username"</span><span class="p">,</span><span class="w"> </span><span class="nt">"required"</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="w"> </span><span class="p">},</span>
+</span><span id="__span-17-10"><a id="__codelineno-17-10" name="__codelineno-17-10" href="#__codelineno-17-10"></a><span class="w">    </span><span class="p">{</span><span class="w"> </span><span class="nt">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"password"</span><span class="p">,</span><span class="w"> </span><span class="nt">"type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"password"</span><span class="p">,</span><span class="w"> </span><span class="nt">"label"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Password"</span><span class="p">,</span><span class="w"> </span><span class="nt">"required"</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="w"> </span><span class="p">}</span>
+</span><span id="__span-17-11"><a id="__codelineno-17-11" name="__codelineno-17-11" href="#__codelineno-17-11"></a><span class="w">  </span><span class="p">]</span>
+</span><span id="__span-17-12"><a id="__codelineno-17-12" name="__codelineno-17-12" href="#__codelineno-17-12"></a><span class="p">}</span>
+</span></code></pre></div>
+<h3 id="72-dashboard-composed-template-tree">7.2 Dashboard (Composed Template Tree)<a class="headerlink" href="#72-dashboard-composed-template-tree" title="Permanent link">¶</a></h3>
+<p><strong>API Response:</strong></p>
+<div class="language-http highlight"><pre><span></span><code><span id="__span-18-1"><a id="__codelineno-18-1" name="__codelineno-18-1" href="#__codelineno-18-1"></a><span class="kr">HTTP</span><span class="o">/</span><span class="m">1.1</span> <span class="m">200</span> <span class="ne">OK</span>
+</span><span id="__span-18-2"><a id="__codelineno-18-2" name="__codelineno-18-2" href="#__codelineno-18-2"></a><span class="na">Content-Type</span><span class="o">:</span> <span class="l">application/hal+json</span>
+</span><span id="__span-18-3"><a id="__codelineno-18-3" name="__codelineno-18-3" href="#__codelineno-18-3"></a><span class="na">Link</span><span class="o">:</span> <span class="l">&lt;https://github.com/SiteNetSoft/quarkus-pha/views/dashboard.json&gt;; rel="view-descriptor"</span>
+</span><span id="__span-18-4"><a id="__codelineno-18-4" name="__codelineno-18-4" href="#__codelineno-18-4"></a>
+</span><span id="__span-18-5"><a id="__codelineno-18-5" name="__codelineno-18-5" href="#__codelineno-18-5"></a><span class="p">{</span>
+</span><span id="__span-18-6"><a id="__codelineno-18-6" name="__codelineno-18-6" href="#__codelineno-18-6"></a><span class="w">  </span><span class="nt">"_links"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nt">"self"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nt">"href"</span><span class="p">:</span><span class="w"> </span><span class="s2">"/api/dashboard"</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="p">},</span>
+</span><span id="__span-18-7"><a id="__codelineno-18-7" name="__codelineno-18-7" href="#__codelineno-18-7"></a><span class="w">  </span><span class="nt">"stats"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nt">"revenue"</span><span class="p">:</span><span class="w"> </span><span class="mi">48200</span><span class="p">,</span><span class="w"> </span><span class="nt">"users"</span><span class="p">:</span><span class="w"> </span><span class="mi">1847</span><span class="p">,</span><span class="w"> </span><span class="nt">"orders"</span><span class="p">:</span><span class="w"> </span><span class="mi">312</span><span class="w"> </span><span class="p">},</span>
+</span><span id="__span-18-8"><a id="__codelineno-18-8" name="__codelineno-18-8" href="#__codelineno-18-8"></a><span class="w">  </span><span class="nt">"recentActivity"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+</span><span id="__span-18-9"><a id="__codelineno-18-9" name="__codelineno-18-9" href="#__codelineno-18-9"></a><span class="w">    </span><span class="p">{</span><span class="w"> </span><span class="nt">"user"</span><span class="p">:</span><span class="w"> </span><span class="s2">"alice"</span><span class="p">,</span><span class="w"> </span><span class="nt">"action"</span><span class="p">:</span><span class="w"> </span><span class="s2">"purchase"</span><span class="p">,</span><span class="w"> </span><span class="nt">"item"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Widget Pro"</span><span class="p">,</span><span class="w"> </span><span class="nt">"time"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2m ago"</span><span class="w"> </span><span class="p">},</span>
+</span><span id="__span-18-10"><a id="__codelineno-18-10" name="__codelineno-18-10" href="#__codelineno-18-10"></a><span class="w">    </span><span class="p">{</span><span class="w"> </span><span class="nt">"user"</span><span class="p">:</span><span class="w"> </span><span class="s2">"bob"</span><span class="p">,</span><span class="w"> </span><span class="nt">"action"</span><span class="p">:</span><span class="w"> </span><span class="s2">"signup"</span><span class="p">,</span><span class="w"> </span><span class="nt">"time"</span><span class="p">:</span><span class="w"> </span><span class="s2">"15m ago"</span><span class="w"> </span><span class="p">}</span>
+</span><span id="__span-18-11"><a id="__codelineno-18-11" name="__codelineno-18-11" href="#__codelineno-18-11"></a><span class="w">  </span><span class="p">],</span>
+</span><span id="__span-18-12"><a id="__codelineno-18-12" name="__codelineno-18-12" href="#__codelineno-18-12"></a><span class="w">  </span><span class="nt">"chartData"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nt">"labels"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">"Mon"</span><span class="p">,</span><span class="s2">"Tue"</span><span class="p">,</span><span class="s2">"Wed"</span><span class="p">,</span><span class="s2">"Thu"</span><span class="p">,</span><span class="s2">"Fri"</span><span class="p">],</span><span class="w"> </span><span class="nt">"values"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="mi">12</span><span class="p">,</span><span class="mi">19</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">5</span><span class="p">,</span><span class="mi">2</span><span class="p">]</span><span class="w"> </span><span class="p">}</span>
+</span><span id="__span-18-13"><a id="__codelineno-18-13" name="__codelineno-18-13" href="#__codelineno-18-13"></a><span class="p">}</span>
+</span></code></pre></div>
+<p><strong>View Descriptor Resource</strong> (<code>dashboard.json</code>):</p>
+<div class="language-json highlight"><pre><span></span><code><span id="__span-19-1"><a id="__codelineno-19-1" name="__codelineno-19-1" href="#__codelineno-19-1"></a><span class="p">{</span>
+</span><span id="__span-19-2"><a id="__codelineno-19-2" name="__codelineno-19-2" href="#__codelineno-19-2"></a><span class="w">  </span><span class="nt">"template"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://github.com/SiteNetSoft/quarkus-pha/templates/layouts/sidebar.html"</span><span class="p">,</span>
+</span><span id="__span-19-3"><a id="__codelineno-19-3" name="__codelineno-19-3" href="#__codelineno-19-3"></a><span class="w">  </span><span class="nt">"slots"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-19-4"><a id="__codelineno-19-4" name="__codelineno-19-4" href="#__codelineno-19-4"></a><span class="w">    </span><span class="nt">"sidebarNav"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-19-5"><a id="__codelineno-19-5" name="__codelineno-19-5" href="#__codelineno-19-5"></a><span class="w">      </span><span class="nt">"template"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://github.com/SiteNetSoft/quarkus-pha/templates/components/navigation/nav.html"</span>
+</span><span id="__span-19-6"><a id="__codelineno-19-6" name="__codelineno-19-6" href="#__codelineno-19-6"></a><span class="w">    </span><span class="p">},</span>
+</span><span id="__span-19-7"><a id="__codelineno-19-7" name="__codelineno-19-7" href="#__codelineno-19-7"></a><span class="w">    </span><span class="nt">"mainContent"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-19-8"><a id="__codelineno-19-8" name="__codelineno-19-8" href="#__codelineno-19-8"></a><span class="w">      </span><span class="nt">"template"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://github.com/SiteNetSoft/quarkus-pha/templates/demos/dashboard.html"</span><span class="p">,</span>
+</span><span id="__span-19-9"><a id="__codelineno-19-9" name="__codelineno-19-9" href="#__codelineno-19-9"></a><span class="w">      </span><span class="nt">"slots"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-19-10"><a id="__codelineno-19-10" name="__codelineno-19-10" href="#__codelineno-19-10"></a><span class="w">        </span><span class="nt">"statsCards"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-19-11"><a id="__codelineno-19-11" name="__codelineno-19-11" href="#__codelineno-19-11"></a><span class="w">          </span><span class="nt">"template"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://github.com/SiteNetSoft/quarkus-pha/templates/components/data-display/card.html"</span>
+</span><span id="__span-19-12"><a id="__codelineno-19-12" name="__codelineno-19-12" href="#__codelineno-19-12"></a><span class="w">        </span><span class="p">},</span>
+</span><span id="__span-19-13"><a id="__codelineno-19-13" name="__codelineno-19-13" href="#__codelineno-19-13"></a><span class="w">        </span><span class="nt">"activityTable"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-19-14"><a id="__codelineno-19-14" name="__codelineno-19-14" href="#__codelineno-19-14"></a><span class="w">          </span><span class="nt">"template"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://github.com/SiteNetSoft/quarkus-pha/templates/components/data-display/table.html"</span>
+</span><span id="__span-19-15"><a id="__codelineno-19-15" name="__codelineno-19-15" href="#__codelineno-19-15"></a><span class="w">        </span><span class="p">},</span>
+</span><span id="__span-19-16"><a id="__codelineno-19-16" name="__codelineno-19-16" href="#__codelineno-19-16"></a><span class="w">        </span><span class="nt">"revenueChart"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-19-17"><a id="__codelineno-19-17" name="__codelineno-19-17" href="#__codelineno-19-17"></a><span class="w">          </span><span class="nt">"template"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://github.com/SiteNetSoft/quarkus-pha/templates/components/charts/chart.html"</span>
+</span><span id="__span-19-18"><a id="__codelineno-19-18" name="__codelineno-19-18" href="#__codelineno-19-18"></a><span class="w">        </span><span class="p">}</span>
+</span><span id="__span-19-19"><a id="__codelineno-19-19" name="__codelineno-19-19" href="#__codelineno-19-19"></a><span class="w">      </span><span class="p">}</span>
+</span><span id="__span-19-20"><a id="__codelineno-19-20" name="__codelineno-19-20" href="#__codelineno-19-20"></a><span class="w">    </span><span class="p">}</span>
+</span><span id="__span-19-21"><a id="__codelineno-19-21" name="__codelineno-19-21" href="#__codelineno-19-21"></a><span class="w">  </span><span class="p">}</span>
+</span><span id="__span-19-22"><a id="__codelineno-19-22" name="__codelineno-19-22" href="#__codelineno-19-22"></a><span class="p">}</span>
+</span></code></pre></div>
+<h3 id="73-odata4-product-list">7.3 OData4 Product List<a class="headerlink" href="#73-odata4-product-list" title="Permanent link">¶</a></h3>
+<div class="language-http highlight"><pre><span></span><code><span id="__span-20-1"><a id="__codelineno-20-1" name="__codelineno-20-1" href="#__codelineno-20-1"></a><span class="kr">HTTP</span><span class="o">/</span><span class="m">1.1</span> <span class="m">200</span> <span class="ne">OK</span>
+</span><span id="__span-20-2"><a id="__codelineno-20-2" name="__codelineno-20-2" href="#__codelineno-20-2"></a><span class="na">Content-Type</span><span class="o">:</span> <span class="l">application/json;odata.metadata=minimal</span>
+</span><span id="__span-20-3"><a id="__codelineno-20-3" name="__codelineno-20-3" href="#__codelineno-20-3"></a><span class="na">Link</span><span class="o">:</span> <span class="l">&lt;https://example.com/views/product-list.json&gt;; rel="view-descriptor"</span>
+</span><span id="__span-20-4"><a id="__codelineno-20-4" name="__codelineno-20-4" href="#__codelineno-20-4"></a>
+</span><span id="__span-20-5"><a id="__codelineno-20-5" name="__codelineno-20-5" href="#__codelineno-20-5"></a><span class="p">{</span>
+</span><span id="__span-20-6"><a id="__codelineno-20-6" name="__codelineno-20-6" href="#__codelineno-20-6"></a><span class="w">  </span><span class="nt">"@odata.context"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://example.com/odata/$metadata#Products"</span><span class="p">,</span>
+</span><span id="__span-20-7"><a id="__codelineno-20-7" name="__codelineno-20-7" href="#__codelineno-20-7"></a><span class="w">  </span><span class="nt">"value"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+</span><span id="__span-20-8"><a id="__codelineno-20-8" name="__codelineno-20-8" href="#__codelineno-20-8"></a><span class="w">    </span><span class="p">{</span><span class="w"> </span><span class="nt">"ProductID"</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="nt">"Name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Widget"</span><span class="p">,</span><span class="w"> </span><span class="nt">"Price"</span><span class="p">:</span><span class="w"> </span><span class="mf">9.99</span><span class="w"> </span><span class="p">},</span>
+</span><span id="__span-20-9"><a id="__codelineno-20-9" name="__codelineno-20-9" href="#__codelineno-20-9"></a><span class="w">    </span><span class="p">{</span><span class="w"> </span><span class="nt">"ProductID"</span><span class="p">:</span><span class="w"> </span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="nt">"Name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Gadget"</span><span class="p">,</span><span class="w"> </span><span class="nt">"Price"</span><span class="p">:</span><span class="w"> </span><span class="mf">24.99</span><span class="w"> </span><span class="p">}</span>
+</span><span id="__span-20-10"><a id="__codelineno-20-10" name="__codelineno-20-10" href="#__codelineno-20-10"></a><span class="w">  </span><span class="p">]</span>
+</span><span id="__span-20-11"><a id="__codelineno-20-11" name="__codelineno-20-11" href="#__codelineno-20-11"></a><span class="p">}</span>
+</span></code></pre></div>
+<p>Data payload is pure OData4. The view descriptor is communicated entirely via the <code>Link</code> header.</p>
+<h3 id="74-multiple-views-responsive">7.4 Multiple Views (Responsive)<a class="headerlink" href="#74-multiple-views-responsive" title="Permanent link">¶</a></h3>
+<div class="language-json highlight"><pre><span></span><code><span id="__span-21-1"><a id="__codelineno-21-1" name="__codelineno-21-1" href="#__codelineno-21-1"></a><span class="p">{</span>
+</span><span id="__span-21-2"><a id="__codelineno-21-2" name="__codelineno-21-2" href="#__codelineno-21-2"></a><span class="w">  </span><span class="nt">"_views"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-21-3"><a id="__codelineno-21-3" name="__codelineno-21-3" href="#__codelineno-21-3"></a><span class="w">    </span><span class="nt">"default"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-21-4"><a id="__codelineno-21-4" name="__codelineno-21-4" href="#__codelineno-21-4"></a><span class="w">      </span><span class="nt">"template"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://example.com/templates/product-detail.html"</span><span class="p">,</span>
+</span><span id="__span-21-5"><a id="__codelineno-21-5" name="__codelineno-21-5" href="#__codelineno-21-5"></a><span class="w">      </span><span class="nt">"slots"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-21-6"><a id="__codelineno-21-6" name="__codelineno-21-6" href="#__codelineno-21-6"></a><span class="w">        </span><span class="nt">"gallery"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-21-7"><a id="__codelineno-21-7" name="__codelineno-21-7" href="#__codelineno-21-7"></a><span class="w">          </span><span class="nt">"template"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://example.com/templates/components/image-carousel.html"</span>
+</span><span id="__span-21-8"><a id="__codelineno-21-8" name="__codelineno-21-8" href="#__codelineno-21-8"></a><span class="w">        </span><span class="p">},</span>
+</span><span id="__span-21-9"><a id="__codelineno-21-9" name="__codelineno-21-9" href="#__codelineno-21-9"></a><span class="w">        </span><span class="nt">"reviews"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-21-10"><a id="__codelineno-21-10" name="__codelineno-21-10" href="#__codelineno-21-10"></a><span class="w">          </span><span class="nt">"template"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://example.com/templates/components/review-list.html"</span>
+</span><span id="__span-21-11"><a id="__codelineno-21-11" name="__codelineno-21-11" href="#__codelineno-21-11"></a><span class="w">        </span><span class="p">}</span>
+</span><span id="__span-21-12"><a id="__codelineno-21-12" name="__codelineno-21-12" href="#__codelineno-21-12"></a><span class="w">      </span><span class="p">}</span>
+</span><span id="__span-21-13"><a id="__codelineno-21-13" name="__codelineno-21-13" href="#__codelineno-21-13"></a><span class="w">    </span><span class="p">},</span>
+</span><span id="__span-21-14"><a id="__codelineno-21-14" name="__codelineno-21-14" href="#__codelineno-21-14"></a><span class="w">    </span><span class="nt">"compact"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-21-15"><a id="__codelineno-21-15" name="__codelineno-21-15" href="#__codelineno-21-15"></a><span class="w">      </span><span class="nt">"template"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://example.com/templates/product-card.html"</span>
+</span><span id="__span-21-16"><a id="__codelineno-21-16" name="__codelineno-21-16" href="#__codelineno-21-16"></a><span class="w">    </span><span class="p">}</span>
+</span><span id="__span-21-17"><a id="__codelineno-21-17" name="__codelineno-21-17" href="#__codelineno-21-17"></a><span class="w">  </span><span class="p">},</span>
+</span><span id="__span-21-18"><a id="__codelineno-21-18" name="__codelineno-21-18" href="#__codelineno-21-18"></a><span class="w">  </span><span class="nt">"id"</span><span class="p">:</span><span class="w"> </span><span class="mi">42</span><span class="p">,</span>
+</span><span id="__span-21-19"><a id="__codelineno-21-19" name="__codelineno-21-19" href="#__codelineno-21-19"></a><span class="w">  </span><span class="nt">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Widget Pro"</span><span class="p">,</span>
+</span><span id="__span-21-20"><a id="__codelineno-21-20" name="__codelineno-21-20" href="#__codelineno-21-20"></a><span class="w">  </span><span class="nt">"price"</span><span class="p">:</span><span class="w"> </span><span class="mf">29.99</span><span class="p">,</span>
+</span><span id="__span-21-21"><a id="__codelineno-21-21" name="__codelineno-21-21" href="#__codelineno-21-21"></a><span class="w">  </span><span class="nt">"images"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">"front.jpg"</span><span class="p">,</span><span class="w"> </span><span class="s2">"side.jpg"</span><span class="p">,</span><span class="w"> </span><span class="s2">"back.jpg"</span><span class="p">],</span>
+</span><span id="__span-21-22"><a id="__codelineno-21-22" name="__codelineno-21-22" href="#__codelineno-21-22"></a><span class="w">  </span><span class="nt">"reviews"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+</span><span id="__span-21-23"><a id="__codelineno-21-23" name="__codelineno-21-23" href="#__codelineno-21-23"></a><span class="w">    </span><span class="p">{</span><span class="w"> </span><span class="nt">"author"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Alice"</span><span class="p">,</span><span class="w"> </span><span class="nt">"rating"</span><span class="p">:</span><span class="w"> </span><span class="mi">5</span><span class="p">,</span><span class="w"> </span><span class="nt">"text"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Excellent!"</span><span class="w"> </span><span class="p">}</span>
+</span><span id="__span-21-24"><a id="__codelineno-21-24" name="__codelineno-21-24" href="#__codelineno-21-24"></a><span class="w">  </span><span class="p">]</span>
+</span><span id="__span-21-25"><a id="__codelineno-21-25" name="__codelineno-21-25" href="#__codelineno-21-25"></a><span class="p">}</span>
+</span></code></pre></div>
+<h3 id="75-bff-backend-for-frontend-pattern">7.5 BFF (Backend for Frontend) Pattern<a class="headerlink" href="#75-bff-backend-for-frontend-pattern" title="Permanent link">¶</a></h3>
+<p>A BFF receives an API response and a view descriptor. Instead of forwarding both to the browser, the BFF resolves the template tree server-side and returns rendered HTML:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-22-1"><a id="__codelineno-22-1" name="__codelineno-22-1" href="#__codelineno-22-1"></a>Browser -&gt; GET /dashboard
+</span><span id="__span-22-2"><a id="__codelineno-22-2" name="__codelineno-22-2" href="#__codelineno-22-2"></a>BFF -&gt; GET /api/dashboard (receives data + Link header with view descriptor)
+</span><span id="__span-22-3"><a id="__codelineno-22-3" name="__codelineno-22-3" href="#__codelineno-22-3"></a>BFF -&gt; Fetches view descriptor
+</span><span id="__span-22-4"><a id="__codelineno-22-4" name="__codelineno-22-4" href="#__codelineno-22-4"></a>BFF -&gt; Fetches templates (with caching)
+</span><span id="__span-22-5"><a id="__codelineno-22-5" name="__codelineno-22-5" href="#__codelineno-22-5"></a>BFF -&gt; Renders composed template tree with data (using Qute, Thymeleaf, etc.)
+</span><span id="__span-22-6"><a id="__codelineno-22-6" name="__codelineno-22-6" href="#__codelineno-22-6"></a>BFF -&gt; Returns rendered HTML to browser
+</span></code></pre></div>
+<p>This is the pattern used by <strong>quarkus-pha</strong>: Quarkus acts as the BFF, fetching data and resolving Qute templates server-side.</p>
+<h2 id="8-client-resolution-algorithm">8. Client Resolution Algorithm<a class="headerlink" href="#8-client-resolution-algorithm" title="Permanent link">¶</a></h2>
+<ol>
+<li><strong>Extract view descriptor</strong> from the response (check <code>_view</code>/<code>_views</code> body key, then <code>Link</code> header, then <code>View-Template</code> header).</li>
+<li><strong>Fetch the view descriptor</strong> if it is a URL reference (cache as appropriate).</li>
+<li><strong>Fetch the root template</strong> from the <code>template</code> URL.</li>
+<li><strong>Identify slot insertion points</strong> in the template.</li>
+<li><strong>For each slot</strong> declared in the view descriptor:
+    a. Fetch the sub-template from its <code>template</code> URL.
+    b. If the sub-template's view descriptor has <code>slots</code>, recurse (go to step 4).
+    c. Insert the resolved sub-template into the slot.</li>
+<li><strong>Render</strong> the composed template tree with the API response data.</li>
+</ol>
+<p>Clients SHOULD impose a maximum recursion depth (RECOMMENDED: 10 levels) to prevent unbounded nesting.</p>
+<h2 id="9-error-handling">9. Error Handling<a class="headerlink" href="#9-error-handling" title="Permanent link">¶</a></h2>
+<p>Clients and BFFs resolving view descriptors MUST handle failures gracefully. The general principle is: <strong>prefer partial rendering over total failure</strong>. The template tree is a best-effort composition.</p>
+<h3 id="91-template-fetch-failures">9.1 Template Fetch Failures<a class="headerlink" href="#91-template-fetch-failures" title="Permanent link">¶</a></h3>
+<p>When fetching a template URL fails (HTTP 404, 5xx, network error, timeout):</p>
+<ul>
+<li>Clients MUST NOT fail the entire render if a single slot's template is unavailable.</li>
+<li>Clients SHOULD skip the unavailable slot and render the remaining template tree.</li>
+<li>Clients MAY display a placeholder or the template's default slot content in place of the failed slot.</li>
+<li>Clients SHOULD log or report the failure for diagnostic purposes.</li>
+</ul>
+<h3 id="92-slot-name-mismatch">9.2 Slot Name Mismatch<a class="headerlink" href="#92-slot-name-mismatch" title="Permanent link">¶</a></h3>
+<p>When a view descriptor references a slot name that does not exist as an insertion point in the template:</p>
+<ul>
+<li>Clients MUST ignore slot assignments that do not match any insertion point in the resolved template.</li>
+<li>Clients SHOULD log a warning for unmatched slot names.</li>
+<li>Insertion points in the template that are not referenced by the view descriptor render their default content (if any).</li>
+</ul>
+<h3 id="93-invalid-view-descriptor">9.3 Invalid View Descriptor<a class="headerlink" href="#93-invalid-view-descriptor" title="Permanent link">¶</a></h3>
+<p>When a view descriptor is malformed (invalid JSON, missing required <code>template</code> field, wrong types):</p>
+<ul>
+<li>Clients MUST reject the invalid view descriptor.</li>
+<li>Clients SHOULD fall back to rendering the raw API data or a default error template.</li>
+<li>If the invalid descriptor is nested within a slot, only that slot fails — the parent template tree continues rendering.</li>
+</ul>
+<h3 id="94-graceful-degradation">9.4 Graceful Degradation<a class="headerlink" href="#94-graceful-degradation" title="Permanent link">¶</a></h3>
+<p>Error handling follows a principle of progressive failure:</p>
+<ol>
+<li>A single slot failure does not prevent the rest of the template tree from rendering.</li>
+<li>A root template failure prevents rendering entirely — the client falls back to raw data or a default template.</li>
+<li>Clients SHOULD provide a consistent fallback experience (e.g., a standard error component) rather than rendering nothing.</li>
+</ol>
+<h2 id="10-security-considerations">10. Security Considerations<a class="headerlink" href="#10-security-considerations" title="Permanent link">¶</a></h2>
+<ul>
+<li><strong>Template URL validation</strong>: Clients MUST validate template URLs against an allowlist of trusted domains. Rendering arbitrary templates from untrusted sources is a code injection risk.</li>
+<li><strong>CORS</strong>: Template resources served cross-origin MUST include appropriate CORS headers.</li>
+<li><strong>Content Security Policy</strong>: Template URLs SHOULD be included in the <code>script-src</code> or <code>style-src</code> CSP directives as appropriate.</li>
+<li><strong>Template sandboxing</strong>: Clients SHOULD render templates in a sandboxed context to prevent template injection attacks.</li>
+<li><strong>HTTPS</strong>: Template URLs MUST use HTTPS in production. Clients SHOULD reject HTTP template URLs.</li>
+</ul>
+<h2 id="11-relationship-to-existing-standards">11. Relationship to Existing Standards<a class="headerlink" href="#11-relationship-to-existing-standards" title="Permanent link">¶</a></h2>
+<table>
+<thead>
+<tr>
+<th>Standard</th>
+<th>Relationship</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>REST</td>
+<td>VDP extends REST responses with view metadata without modifying the resource representation itself</td>
+</tr>
+<tr>
+<td>HAL (RFC draft)</td>
+<td>VDP uses HAL's underscore convention (<code>_view</code>) for inline transport. Compatible with <code>_links</code> and <code>_embedded</code></td>
+</tr>
+<tr>
+<td>JSON-LD</td>
+<td>VDP can coexist with <code>@context</code>/<code>@type</code> annotations. Template URLs could be expressed as JSON-LD <code>@id</code> values</td>
+</tr>
+<tr>
+<td>OData4</td>
+<td>VDP uses OData4 instance annotations (<code>@View.descriptor</code>) or HTTP headers for compatibility</td>
+</tr>
+<tr>
+<td>RFC 8288 (Web Linking)</td>
+<td>VDP defines the <code>view-descriptor</code> link relation type for the <code>Link</code> header</td>
+</tr>
+<tr>
+<td>HATEOAS</td>
+<td>VDP is complementary — HATEOAS tells clients what actions are available, VDP tells clients how to render the result</td>
+</tr>
+</tbody>
+</table>
+<h2 id="12-iana-considerations">12. IANA Considerations<a class="headerlink" href="#12-iana-considerations" title="Permanent link">¶</a></h2>
+<p>This specification requests registration of:</p>
+<h3 id="121-link-relation-type">12.1 Link Relation Type<a class="headerlink" href="#121-link-relation-type" title="Permanent link">¶</a></h3>
+<ul>
+<li><strong>Relation Name:</strong> <code>view-descriptor</code></li>
+<li><strong>Description:</strong> Refers to a VDP view descriptor resource that describes how to render the linked resource.</li>
+<li><strong>Reference:</strong> This specification</li>
+</ul>
+<h3 id="122-media-type">12.2 Media Type<a class="headerlink" href="#122-media-type" title="Permanent link">¶</a></h3>
+<ul>
+<li><strong>Type name:</strong> application</li>
+<li><strong>Subtype name:</strong> vdp+json</li>
+<li><strong>Required parameters:</strong> None</li>
+<li><strong>Optional parameters:</strong> <code>version</code></li>
+<li><strong>Reference:</strong> This specification</li>
+</ul>
+<h2 id="13-discovery">13. Discovery<a class="headerlink" href="#13-discovery" title="Permanent link">¶</a></h2>
+<p>APIs SHOULD advertise VDP support so clients can detect it programmatically.</p>
+<h3 id="131-options-response">13.1 OPTIONS Response<a class="headerlink" href="#131-options-response" title="Permanent link">¶</a></h3>
+<p>An API endpoint supporting VDP MUST include the <code>VDP</code> token in the <code>Allow</code> or a custom header in its <code>OPTIONS</code> response:</p>
+<div class="language-http highlight"><pre><span></span><code><span id="__span-23-1"><a id="__codelineno-23-1" name="__codelineno-23-1" href="#__codelineno-23-1"></a><span class="nf">OPTIONS</span> <span class="nn">/api/dashboard</span> <span class="kr">HTTP</span><span class="o">/</span><span class="m">1.1</span>
+</span><span id="__span-23-2"><a id="__codelineno-23-2" name="__codelineno-23-2" href="#__codelineno-23-2"></a>
+</span><span id="__span-23-3"><a id="__codelineno-23-3" name="__codelineno-23-3" href="#__codelineno-23-3"></a>HTTP/1.1 204 No Content
+</span><span id="__span-23-4"><a id="__codelineno-23-4" name="__codelineno-23-4" href="#__codelineno-23-4"></a>Allow: GET, HEAD, OPTIONS
+</span><span id="__span-23-5"><a id="__codelineno-23-5" name="__codelineno-23-5" href="#__codelineno-23-5"></a>VDP-Support: true
+</span><span id="__span-23-6"><a id="__codelineno-23-6" name="__codelineno-23-6" href="#__codelineno-23-6"></a>VDP-Version: 0.1
+</span></code></pre></div>
+<h3 id="132-well-known-uri">13.2 Well-Known URI<a class="headerlink" href="#132-well-known-uri" title="Permanent link">¶</a></h3>
+<p>APIs MAY expose a discovery document at <code>/.well-known/vdp</code>:</p>
+<div class="language-http highlight"><pre><span></span><code><span id="__span-24-1"><a id="__codelineno-24-1" name="__codelineno-24-1" href="#__codelineno-24-1"></a><span class="nf">GET</span> <span class="nn">/.well-known/vdp</span> <span class="kr">HTTP</span><span class="o">/</span><span class="m">1.1</span>
+</span><span id="__span-24-2"><a id="__codelineno-24-2" name="__codelineno-24-2" href="#__codelineno-24-2"></a>
+</span><span id="__span-24-3"><a id="__codelineno-24-3" name="__codelineno-24-3" href="#__codelineno-24-3"></a>HTTP/1.1 200 OK
+</span><span id="__span-24-4"><a id="__codelineno-24-4" name="__codelineno-24-4" href="#__codelineno-24-4"></a>Content-Type: application/vdp+json
+</span><span id="__span-24-5"><a id="__codelineno-24-5" name="__codelineno-24-5" href="#__codelineno-24-5"></a>
+</span><span id="__span-24-6"><a id="__codelineno-24-6" name="__codelineno-24-6" href="#__codelineno-24-6"></a>{
+</span><span id="__span-24-7"><a id="__codelineno-24-7" name="__codelineno-24-7" href="#__codelineno-24-7"></a>  "version": "0.1",
+</span><span id="__span-24-8"><a id="__codelineno-24-8" name="__codelineno-24-8" href="#__codelineno-24-8"></a>  "endpoints": {
+</span><span id="__span-24-9"><a id="__codelineno-24-9" name="__codelineno-24-9" href="#__codelineno-24-9"></a>    "/api/dashboard": {
+</span><span id="__span-24-10"><a id="__codelineno-24-10" name="__codelineno-24-10" href="#__codelineno-24-10"></a>      "template": "https://example.com/views/dashboard.json"
+</span><span id="__span-24-11"><a id="__codelineno-24-11" name="__codelineno-24-11" href="#__codelineno-24-11"></a>    },
+</span><span id="__span-24-12"><a id="__codelineno-24-12" name="__codelineno-24-12" href="#__codelineno-24-12"></a>    "/api/products": {
+</span><span id="__span-24-13"><a id="__codelineno-24-13" name="__codelineno-24-13" href="#__codelineno-24-13"></a>      "template": "https://example.com/views/product-list.json"
+</span><span id="__span-24-14"><a id="__codelineno-24-14" name="__codelineno-24-14" href="#__codelineno-24-14"></a>    }
+</span><span id="__span-24-15"><a id="__codelineno-24-15" name="__codelineno-24-15" href="#__codelineno-24-15"></a>  },
+</span><span id="__span-24-16"><a id="__codelineno-24-16" name="__codelineno-24-16" href="#__codelineno-24-16"></a>  "trustedTemplateDomains": [
+</span><span id="__span-24-17"><a id="__codelineno-24-17" name="__codelineno-24-17" href="#__codelineno-24-17"></a>    "https://github.com/SiteNetSoft/quarkus-pha"
+</span><span id="__span-24-18"><a id="__codelineno-24-18" name="__codelineno-24-18" href="#__codelineno-24-18"></a>  ]
+</span><span id="__span-24-19"><a id="__codelineno-24-19" name="__codelineno-24-19" href="#__codelineno-24-19"></a>}
+</span></code></pre></div>
+<p>This allows clients to prefetch view descriptors and preload templates before making data requests. The <code>trustedTemplateDomains</code> field provides the template URL allowlist referenced in Section 10.</p>
+<h3 id="133-openapi-extension">13.3 OpenAPI Extension<a class="headerlink" href="#133-openapi-extension" title="Permanent link">¶</a></h3>
+<p>For APIs documented with OpenAPI 3.x, VDP metadata can be declared using the <code>x-vdp</code> extension:</p>
+<div class="language-yaml highlight"><pre><span></span><code><span id="__span-25-1"><a id="__codelineno-25-1" name="__codelineno-25-1" href="#__codelineno-25-1"></a><span class="nt">paths</span><span class="p">:</span>
+</span><span id="__span-25-2"><a id="__codelineno-25-2" name="__codelineno-25-2" href="#__codelineno-25-2"></a><span class="w">  </span><span class="nt">/api/dashboard</span><span class="p">:</span>
+</span><span id="__span-25-3"><a id="__codelineno-25-3" name="__codelineno-25-3" href="#__codelineno-25-3"></a><span class="w">    </span><span class="nt">get</span><span class="p">:</span>
+</span><span id="__span-25-4"><a id="__codelineno-25-4" name="__codelineno-25-4" href="#__codelineno-25-4"></a><span class="w">      </span><span class="nt">summary</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Get dashboard data</span>
+</span><span id="__span-25-5"><a id="__codelineno-25-5" name="__codelineno-25-5" href="#__codelineno-25-5"></a><span class="w">      </span><span class="nt">x-vdp</span><span class="p">:</span>
+</span><span id="__span-25-6"><a id="__codelineno-25-6" name="__codelineno-25-6" href="#__codelineno-25-6"></a><span class="w">        </span><span class="nt">view-descriptor</span><span class="p">:</span><span class="w"> </span><span class="s">"https://example.com/views/dashboard.json"</span>
+</span><span id="__span-25-7"><a id="__codelineno-25-7" name="__codelineno-25-7" href="#__codelineno-25-7"></a><span class="w">      </span><span class="nt">responses</span><span class="p">:</span>
+</span><span id="__span-25-8"><a id="__codelineno-25-8" name="__codelineno-25-8" href="#__codelineno-25-8"></a><span class="w">        </span><span class="s">'200'</span><span class="p p-Indicator">:</span>
+</span><span id="__span-25-9"><a id="__codelineno-25-9" name="__codelineno-25-9" href="#__codelineno-25-9"></a><span class="w">          </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Dashboard data</span>
+</span><span id="__span-25-10"><a id="__codelineno-25-10" name="__codelineno-25-10" href="#__codelineno-25-10"></a><span class="w">          </span><span class="nt">headers</span><span class="p">:</span>
+</span><span id="__span-25-11"><a id="__codelineno-25-11" name="__codelineno-25-11" href="#__codelineno-25-11"></a><span class="w">            </span><span class="nt">Link</span><span class="p">:</span>
+</span><span id="__span-25-12"><a id="__codelineno-25-12" name="__codelineno-25-12" href="#__codelineno-25-12"></a><span class="w">              </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">View descriptor reference</span>
+</span><span id="__span-25-13"><a id="__codelineno-25-13" name="__codelineno-25-13" href="#__codelineno-25-13"></a><span class="w">              </span><span class="nt">schema</span><span class="p">:</span>
+</span><span id="__span-25-14"><a id="__codelineno-25-14" name="__codelineno-25-14" href="#__codelineno-25-14"></a><span class="w">                </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">string</span>
+</span></code></pre></div>
+<h2 id="14-partial-updates">14. Partial Updates<a class="headerlink" href="#14-partial-updates" title="Permanent link">¶</a></h2>
+<p>VDP does not define a "partial update" mechanism — every API response carries its own complete view descriptor for its own content. However, VDP naturally supports partial update patterns used by modern web frameworks.</p>
+<h3 id="141-pattern">14.1 Pattern<a class="headerlink" href="#141-pattern" title="Permanent link">¶</a></h3>
+<p>In interactive applications, a client may re-request data for a subset of the page (e.g., refreshing a single dashboard widget). The server returns new data with a view descriptor as usual. From VDP's perspective, there is no distinction between a "full page" response and a "partial" response — both are API responses with view descriptors.</p>
+<h3 id="142-slot-level-re-rendering">14.2 Slot-Level Re-rendering<a class="headerlink" href="#142-slot-level-re-rendering" title="Permanent link">¶</a></h3>
+<p>Clients MAY optimize rendering by comparing previous and current view descriptors:</p>
+<ol>
+<li>If a slot's template URL has not changed, the cached template can be reused.</li>
+<li>Only slots with changed template URLs or changed data need re-fetching and re-rendering.</li>
+<li>The view descriptor's template tree structure provides natural boundaries for incremental updates.</li>
+</ol>
+<p>This is a client-side optimization, not a protocol requirement. VDP does not mandate any diffing or caching behavior.</p>
+<h3 id="143-htmx-integration">14.3 HTMX Integration<a class="headerlink" href="#143-htmx-integration" title="Permanent link">¶</a></h3>
+<p>VDP integrates naturally with HTMX's partial page update model. VDP slots map to HTMX swap targets:</p>
+<div class="language-http highlight"><pre><span></span><code><span id="__span-26-1"><a id="__codelineno-26-1" name="__codelineno-26-1" href="#__codelineno-26-1"></a><span class="nf">GET</span> <span class="nn">/api/dashboard/stats</span> <span class="kr">HTTP</span><span class="o">/</span><span class="m">1.1</span>
+</span><span id="__span-26-2"><a id="__codelineno-26-2" name="__codelineno-26-2" href="#__codelineno-26-2"></a><span class="na">HX-Request</span><span class="o">:</span> <span class="l">true</span>
+</span><span id="__span-26-3"><a id="__codelineno-26-3" name="__codelineno-26-3" href="#__codelineno-26-3"></a>
+</span><span id="__span-26-4"><a id="__codelineno-26-4" name="__codelineno-26-4" href="#__codelineno-26-4"></a>HTTP/1.1 200 OK
+</span><span id="__span-26-5"><a id="__codelineno-26-5" name="__codelineno-26-5" href="#__codelineno-26-5"></a>Content-Type: application/json
+</span><span id="__span-26-6"><a id="__codelineno-26-6" name="__codelineno-26-6" href="#__codelineno-26-6"></a>View-Template: https://example.com/templates/components/stats-row.html
+</span><span id="__span-26-7"><a id="__codelineno-26-7" name="__codelineno-26-7" href="#__codelineno-26-7"></a>
+</span><span id="__span-26-8"><a id="__codelineno-26-8" name="__codelineno-26-8" href="#__codelineno-26-8"></a>{"revenue": 52400, "users": 1923, "orders": 347}
+</span></code></pre></div>
+<p>In a BFF architecture, the BFF resolves the view descriptor and returns rendered HTML directly:</p>
+<div class="language-http highlight"><pre><span></span><code><span id="__span-27-1"><a id="__codelineno-27-1" name="__codelineno-27-1" href="#__codelineno-27-1"></a><span class="nf">GET</span> <span class="nn">/dashboard/stats</span> <span class="kr">HTTP</span><span class="o">/</span><span class="m">1.1</span>
+</span><span id="__span-27-2"><a id="__codelineno-27-2" name="__codelineno-27-2" href="#__codelineno-27-2"></a><span class="na">HX-Request</span><span class="o">:</span> <span class="l">true</span>
+</span><span id="__span-27-3"><a id="__codelineno-27-3" name="__codelineno-27-3" href="#__codelineno-27-3"></a>
+</span><span id="__span-27-4"><a id="__codelineno-27-4" name="__codelineno-27-4" href="#__codelineno-27-4"></a>HTTP/1.1 200 OK
+</span><span id="__span-27-5"><a id="__codelineno-27-5" name="__codelineno-27-5" href="#__codelineno-27-5"></a>Content-Type: text/html
+</span><span id="__span-27-6"><a id="__codelineno-27-6" name="__codelineno-27-6" href="#__codelineno-27-6"></a>
+</span><span id="__span-27-7"><a id="__codelineno-27-7" name="__codelineno-27-7" href="#__codelineno-27-7"></a>&lt;div class="stats-row"&gt;
+</span><span id="__span-27-8"><a id="__codelineno-27-8" name="__codelineno-27-8" href="#__codelineno-27-8"></a>  &lt;div class="stat"&gt;Revenue: $52,400&lt;/div&gt;
+</span><span id="__span-27-9"><a id="__codelineno-27-9" name="__codelineno-27-9" href="#__codelineno-27-9"></a>  &lt;div class="stat"&gt;Users: 1,923&lt;/div&gt;
+</span><span id="__span-27-10"><a id="__codelineno-27-10" name="__codelineno-27-10" href="#__codelineno-27-10"></a>&lt;/div&gt;
+</span></code></pre></div>
+<p>The client-side HTMX attribute targets the slot's DOM element:</p>
+<div class="language-html highlight"><pre><span></span><code><span id="__span-28-1"><a id="__codelineno-28-1" name="__codelineno-28-1" href="#__codelineno-28-1"></a><span class="p">&lt;</span><span class="nt">div</span> <span class="na">hx-get</span><span class="o">=</span><span class="s">"/dashboard/stats"</span> <span class="na">hx-trigger</span><span class="o">=</span><span class="s">"every 30s"</span> <span class="na">hx-swap</span><span class="o">=</span><span class="s">"innerHTML"</span><span class="p">&gt;</span>
+</span><span id="__span-28-2"><a id="__codelineno-28-2" name="__codelineno-28-2" href="#__codelineno-28-2"></a>  <span class="cm">&lt;!-- VDP slot: statsRow --&gt;</span>
+</span><span id="__span-28-3"><a id="__codelineno-28-3" name="__codelineno-28-3" href="#__codelineno-28-3"></a><span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+</span></code></pre></div>
+<h3 id="144-bff-responsibility">14.4 BFF Responsibility<a class="headerlink" href="#144-bff-responsibility" title="Permanent link">¶</a></h3>
+<p>Partial rendering logic belongs to the BFF or client, not to VDP. The protocol is the same whether the response represents a full page or a single component. The BFF decides:</p>
+<ul>
+<li>Which API endpoint to call for a partial update</li>
+<li>How to map the returned view descriptor to a DOM region</li>
+<li>Whether to re-render just the changed slot or the entire template tree</li>
+</ul>
+<p>VDP's role is unchanged: declare which template renders the returned data.</p>
+<hr>
+<h2 id="design-decisions">Design Decisions<a class="headerlink" href="#design-decisions" title="Permanent link">¶</a></h2>
+<p>The following questions were considered and resolved during the design of this specification:</p>
+<ol>
+<li>
+<p><strong>Conditional slots</strong> (e.g., "use template A for admins, B for guests"): <strong>Not in scope.</strong> Authorization logic belongs on the server. The server sends different view descriptors based on the user's role. VDP is purely declarative — it describes <em>what</em> to render, not <em>when</em> or <em>for whom</em>.</p>
+</li>
+<li>
+<p><strong>Template parameters</strong> (e.g., passing <code>{"compact": true}</code> to a template): <strong>Not in scope.</strong> VDP declares <em>which</em> templates to use, nothing more. Configuration, styling, and data binding are the template engine's responsibility. Keeping VDP minimal ensures it works across all rendering frameworks without making assumptions about their capabilities.</p>
+</li>
+<li>
+<p><strong>Data-to-template mapping</strong> (e.g., specifying which JSON fields feed which template): <strong>Not in scope.</strong> Templates are responsible for extracting data from the API response using their own mechanisms (Qute expressions, JSONPath, data attributes, etc.). VDP maintains a clean separation between template selection and data binding.</p>
+</li>
+</ol>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"></path></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+    
+      
+      <nav class="md-footer__inner md-grid" aria-label="Footer">
+        
+          
+          <a href=".." class="md-footer__link md-footer__link--prev" aria-label="Previous: Home">
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"></path></svg>
+            </div>
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Previous
+              </span>
+              <div class="md-ellipsis">
+                Home
+              </div>
+            </div>
+          </a>
+        
+        
+          
+          <a href="../schema/" class="md-footer__link md-footer__link--next" aria-label="Next: Schema">
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Next
+              </span>
+              <div class="md-ellipsis">
+                Schema
+              </div>
+            </div>
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11z"></path></svg>
+            </div>
+          </a>
+        
+      </nav>
+    
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      Copyright © 2025 ViewDescriptorProtocol
+    </div>
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "..", "features": ["content.code.copy", "content.code.annotate", "navigation.tabs", "navigation.sections", "navigation.top", "navigation.footer", "search.suggest", "search.highlight", "toc.follow"], "search": "../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.79ae519e.min.js"></script>
+      
+    
+  
+<script id="init-glightbox">const lightbox = GLightbox({"touchNavigation": true, "loop": false, "zoomable": true, "draggable": true, "openEffect": "zoom", "closeEffect": "zoom", "slideEffect": "slide"});
+document$.subscribe(()=>{ lightbox.reload(); });
+</script></body></html>
