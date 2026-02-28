@@ -1,0 +1,73 @@
+site_name: View Descriptor Protocol
+site_url: https://viewdescriptorprotocol.org
+site_description: Server-driven template binding for cross-platform UI rendering
+site_author: ViewDescriptorProtocol
+
+repo_url: https://github.com/ViewDescriptorProtocol/VDP
+repo_name: ViewDescriptorProtocol/VDP
+
+copyright: Copyright &copy; 2025 ViewDescriptorProtocol
+
+theme:
+  name: material
+  custom_dir: docs/overrides
+  logo: assets/logo.png
+  favicon: assets/logo.png
+  palette:
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: custom
+      accent: light blue
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: custom
+      accent: light blue
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
+  features:
+    - content.code.copy
+    - content.code.annotate
+    - navigation.tabs
+    - navigation.sections
+    - navigation.top
+    - navigation.footer
+    - search.suggest
+    - search.highlight
+    - toc.follow
+
+extra_css:
+  - assets/extra.css
+
+nav:
+  - Home: index.md
+  - Specification: specification.md
+  - Schema: schema.md
+  - Examples: examples.md
+  - Related Projects: related-projects.md
+
+plugins:
+  - search
+  - glightbox
+
+markdown_extensions:
+  - admonition
+  - pymdownx.details
+  - pymdownx.superfences
+  - pymdownx.highlight:
+      anchor_linenums: true
+      line_spans: __span
+      pygments_lang_class: true
+  - pymdownx.inlinehilite
+  - pymdownx.tabbed:
+      alternate_style: true
+  - pymdownx.snippets
+  - tables
+  - toc:
+      permalink: true
+  - attr_list
+  - md_in_html
+  - def_list
