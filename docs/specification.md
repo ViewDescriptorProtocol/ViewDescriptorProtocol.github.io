@@ -12,10 +12,12 @@ The View Descriptor Protocol (VDP) defines a standard mechanism for associating 
 REST APIs return structured data (JSON, XML) that carries no presentation information. The client must independently decide how to render this data — typically by hardcoding template choices into client logic. This creates tight coupling between API consumers and their rendering layer.
 
 **VDP solves this by letting the server declare:**
+
 - Which template(s) to use for rendering a response
 - How templates compose together (which sub-template fills which slot)
 
 **VDP explicitly does NOT define:**
+
 - How templates bind to data (that is the template engine's job — Qute expressions, JSONPath, etc.)
 - Styling or CSS class information (that belongs in the template itself)
 - Client-side state management
@@ -26,7 +28,7 @@ REST APIs return structured data (JSON, XML) that carries no presentation inform
 - **Template URL**: A URL identifying a template resource. The URL MUST resolve to a renderable template in the client's rendering framework.
 - **Slot**: A named insertion point in a template where a sub-template can be composed. Slot names correspond to the template's own insertion point identifiers (e.g., Qute's `{#insert slotName}`, HTML's `<slot name="slotName">`).
 - **View Descriptor Resource**: A standalone JSON document containing a view descriptor, addressable by its own URL, cacheable independently of the data it describes.
-- **Static Composition**: Template includes that are hardcoded within the template itself (e.g., a layout always including its `_head.html` partial). VDP does not manage these — they are the template's internal concern.
+- **Static Composition**: Template includes that are hardcoded within the template itself (e.g., a layout always including its `_head` partial). VDP does not manage these — they are the template's internal concern.
 - **Dynamic Composition**: Template slots whose content varies per API response. VDP manages these.
 
 ## 3. View Descriptor Format
@@ -37,7 +39,7 @@ The simplest view descriptor points to a single template with no slots:
 
 ```json
 {
-  "template": "https://example.com/templates/article.html"
+  "template": "https://example.com/templates/article"
 }
 ```
 
@@ -47,19 +49,19 @@ When a template has named insertion points that should be filled dynamically, th
 
 ```json
 {
-  "template": "https://github.com/SiteNetSoft/quarkus-pha/templates/layouts/sidebar.html",
+  "template": "https://github.com/SiteNetSoft/quarkus-pha/templates/layouts/sidebar",
   "slots": {
     "mainContent": {
-      "template": "https://github.com/SiteNetSoft/quarkus-pha/templates/components/data-display/card.html"
+      "template": "https://github.com/SiteNetSoft/quarkus-pha/templates/components/data-display/card"
     },
     "sidebarNav": {
-      "template": "https://github.com/SiteNetSoft/quarkus-pha/templates/components/navigation/nav.html"
+      "template": "https://github.com/SiteNetSoft/quarkus-pha/templates/components/navigation/nav"
     }
   }
 }
 ```
 
-This tells the client: "Render `sidebar.html`, and fill its `mainContent` slot with `card.html` and its `sidebarNav` slot with `nav.html`."
+This tells the client: "Render `sidebar`, and fill its `mainContent` slot with `card` and its `sidebarNav` slot with `nav`."
 
 ### 3.3 Recursive Nesting
 
@@ -67,29 +69,29 @@ Since each slot value is itself a view descriptor, composition nests to arbitrar
 
 ```json
 {
-  "template": "https://github.com/SiteNetSoft/quarkus-pha/templates/layouts/sidebar.html",
+  "template": "https://github.com/SiteNetSoft/quarkus-pha/templates/layouts/sidebar",
   "slots": {
     "mainContent": {
-      "template": "https://github.com/SiteNetSoft/quarkus-pha/templates/demos/dashboard.html",
+      "template": "https://github.com/SiteNetSoft/quarkus-pha/templates/demos/dashboard",
       "slots": {
         "statsRow": {
-          "template": "https://github.com/SiteNetSoft/quarkus-pha/templates/components/data-display/card.html"
+          "template": "https://github.com/SiteNetSoft/quarkus-pha/templates/components/data-display/card"
         },
         "activityTable": {
-          "template": "https://github.com/SiteNetSoft/quarkus-pha/templates/components/data-display/table.html"
+          "template": "https://github.com/SiteNetSoft/quarkus-pha/templates/components/data-display/table"
         },
         "chart": {
-          "template": "https://github.com/SiteNetSoft/quarkus-pha/templates/components/charts/chart.html",
+          "template": "https://github.com/SiteNetSoft/quarkus-pha/templates/components/charts/chart",
           "slots": {
             "legend": {
-              "template": "https://github.com/SiteNetSoft/quarkus-pha/templates/components/charts/chart-legend.html"
+              "template": "https://github.com/SiteNetSoft/quarkus-pha/templates/components/charts/chart-legend"
             }
           }
         }
       }
     },
     "sidebarNav": {
-      "template": "https://github.com/SiteNetSoft/quarkus-pha/templates/components/navigation/nav.html"
+      "template": "https://github.com/SiteNetSoft/quarkus-pha/templates/components/navigation/nav"
     }
   }
 }
@@ -103,16 +105,16 @@ A single API response may offer multiple views (e.g., a summary view and a detai
 {
   "views": {
     "default": {
-      "template": "https://example.com/templates/product-detail.html"
+      "template": "https://example.com/templates/product-detail"
     },
     "compact": {
-      "template": "https://example.com/templates/product-card.html"
+      "template": "https://example.com/templates/product-card"
     },
     "mobile": {
-      "template": "https://example.com/templates/product-mobile.html",
+      "template": "https://example.com/templates/product-mobile",
       "slots": {
         "gallery": {
-          "template": "https://example.com/templates/components/swipe-gallery.html"
+          "template": "https://example.com/templates/components/swipe-gallery"
         }
       }
     }
@@ -128,21 +130,21 @@ A single slot can accept multiple templates, rendered in sequence within the ins
 
 ```json
 {
-  "template": "https://github.com/SiteNetSoft/quarkus-pha/templates/layouts/sidebar.html",
+  "template": "https://github.com/SiteNetSoft/quarkus-pha/templates/layouts/sidebar",
   "slots": {
     "mainContent": [
       {
-        "template": "https://github.com/SiteNetSoft/quarkus-pha/templates/components/data-display/card.html"
+        "template": "https://github.com/SiteNetSoft/quarkus-pha/templates/components/data-display/card"
       },
       {
-        "template": "https://github.com/SiteNetSoft/quarkus-pha/templates/components/charts/chart.html"
+        "template": "https://github.com/SiteNetSoft/quarkus-pha/templates/components/charts/chart"
       },
       {
-        "template": "https://github.com/SiteNetSoft/quarkus-pha/templates/components/data-display/table.html"
+        "template": "https://github.com/SiteNetSoft/quarkus-pha/templates/components/data-display/table"
       }
     ],
     "sidebarNav": {
-      "template": "https://github.com/SiteNetSoft/quarkus-pha/templates/components/navigation/nav.html"
+      "template": "https://github.com/SiteNetSoft/quarkus-pha/templates/components/navigation/nav"
     }
   }
 }
@@ -186,12 +188,12 @@ The client fetches `https://example.com/views/dashboard.json` to get the view de
 - Keeps the data payload completely clean
 - Works with **any** data format (JSON, XML, OData4, GraphQL, Protocol Buffers)
 - The view descriptor resource is independently cacheable
-- Uses existing web standards (RFC 8288 Link Relations)
+- Uses existing web standards ([RFC 8288](https://www.rfc-editor.org/rfc/rfc8288) Link Relations)
 
 **For simple cases** (single template, no composition), a shorthand header is also defined:
 
 ```http
-View-Template: https://example.com/templates/article.html
+View-Template: https://example.com/templates/article
 ```
 
 When `View-Template` is present, it is equivalent to `{"template": "<URL>"}`. If both `Link` (with `rel="view-descriptor"`) and `View-Template` are present, the `Link` header takes precedence.
@@ -206,10 +208,10 @@ When the data format is flexible (e.g., HAL+JSON, custom APIs), embed the view d
     "self": { "href": "/api/dashboard" }
   },
   "_view": {
-    "template": "https://github.com/SiteNetSoft/quarkus-pha/templates/demos/dashboard.html",
+    "template": "https://github.com/SiteNetSoft/quarkus-pha/templates/demos/dashboard",
     "slots": {
       "statsRow": {
-        "template": "https://github.com/SiteNetSoft/quarkus-pha/templates/components/data-display/card.html"
+        "template": "https://github.com/SiteNetSoft/quarkus-pha/templates/components/data-display/card"
       }
     }
   },
@@ -227,11 +229,11 @@ For **multiple views**, use `_views`:
 {
   "_views": {
     "default": {
-      "template": "https://example.com/templates/dashboard-full.html",
+      "template": "https://example.com/templates/dashboard-full",
       "slots": { "..." : "..." }
     },
     "widget": {
-      "template": "https://example.com/templates/dashboard-widget.html"
+      "template": "https://example.com/templates/dashboard-widget"
     }
   },
   "revenue": 48200,
@@ -285,7 +287,7 @@ Cache-Control: public, max-age=3600
 ETag: "v2-dashboard"
 
 {
-  "template": "https://example.com/templates/dashboard.html",
+  "template": "https://example.com/templates/dashboard",
   "slots": { "..." : "..." }
 }
 ```
@@ -323,10 +325,10 @@ Given an API response at `https://example.com/api/dashboard` with an inline view
 ```json
 {
   "_view": {
-    "template": "templates/layouts/sidebar.html",
+    "template": "templates/layouts/sidebar",
     "slots": {
       "mainContent": {
-        "template": "templates/components/card.html"
+        "template": "templates/components/card"
       }
     }
   }
@@ -334,8 +336,8 @@ Given an API response at `https://example.com/api/dashboard` with an inline view
 ```
 
 Both template URLs resolve against `https://example.com/api/dashboard`:
-- `templates/layouts/sidebar.html` → `https://example.com/templates/layouts/sidebar.html`
-- `templates/components/card.html` → `https://example.com/templates/components/card.html`
+- `templates/layouts/sidebar` → `https://example.com/templates/layouts/sidebar`
+- `templates/components/card` → `https://example.com/templates/components/card`
 
 Servers SHOULD use absolute URLs when view descriptors may be consumed by multiple clients with different base URL contexts.
 
@@ -371,7 +373,7 @@ VDP is agnostic to the template language. However, templates used with VDP MUST 
 
 ### 6.2 Static vs Dynamic Slots
 
-Not all insertion points in a template need to be managed by VDP. Templates commonly include static partials (like a shared `_head.html` or a footer) that are hardcoded. Only slots that vary per API response need to appear in the view descriptor.
+Not all insertion points in a template need to be managed by VDP. Templates commonly include static partials (like a shared `_head` or a footer) that are hardcoded. Only slots that vary per API response need to appear in the view descriptor.
 
 ## 7. Examples
 
@@ -382,7 +384,7 @@ Not all insertion points in a template need to be managed by VDP. Templates comm
 ```http
 HTTP/1.1 200 OK
 Content-Type: application/json
-View-Template: https://github.com/SiteNetSoft/quarkus-pha/templates/components/forms/form.html
+View-Template: https://github.com/SiteNetSoft/quarkus-pha/templates/components/forms/form
 
 {
   "csrfToken": "abc123",
@@ -418,22 +420,22 @@ Link: <https://github.com/SiteNetSoft/quarkus-pha/views/dashboard.json>; rel="vi
 
 ```json
 {
-  "template": "https://github.com/SiteNetSoft/quarkus-pha/templates/layouts/sidebar.html",
+  "template": "https://github.com/SiteNetSoft/quarkus-pha/templates/layouts/sidebar",
   "slots": {
     "sidebarNav": {
-      "template": "https://github.com/SiteNetSoft/quarkus-pha/templates/components/navigation/nav.html"
+      "template": "https://github.com/SiteNetSoft/quarkus-pha/templates/components/navigation/nav"
     },
     "mainContent": {
-      "template": "https://github.com/SiteNetSoft/quarkus-pha/templates/demos/dashboard.html",
+      "template": "https://github.com/SiteNetSoft/quarkus-pha/templates/demos/dashboard",
       "slots": {
         "statsCards": {
-          "template": "https://github.com/SiteNetSoft/quarkus-pha/templates/components/data-display/card.html"
+          "template": "https://github.com/SiteNetSoft/quarkus-pha/templates/components/data-display/card"
         },
         "activityTable": {
-          "template": "https://github.com/SiteNetSoft/quarkus-pha/templates/components/data-display/table.html"
+          "template": "https://github.com/SiteNetSoft/quarkus-pha/templates/components/data-display/table"
         },
         "revenueChart": {
-          "template": "https://github.com/SiteNetSoft/quarkus-pha/templates/components/charts/chart.html"
+          "template": "https://github.com/SiteNetSoft/quarkus-pha/templates/components/charts/chart"
         }
       }
     }
@@ -465,18 +467,18 @@ Data payload is pure OData4. The view descriptor is communicated entirely via th
 {
   "_views": {
     "default": {
-      "template": "https://example.com/templates/product-detail.html",
+      "template": "https://example.com/templates/product-detail",
       "slots": {
         "gallery": {
-          "template": "https://example.com/templates/components/image-carousel.html"
+          "template": "https://example.com/templates/components/image-carousel"
         },
         "reviews": {
-          "template": "https://example.com/templates/components/review-list.html"
+          "template": "https://example.com/templates/components/review-list"
         }
       }
     },
     "compact": {
-      "template": "https://example.com/templates/product-card.html"
+      "template": "https://example.com/templates/product-card"
     }
   },
   "id": 42,
@@ -571,7 +573,7 @@ Error handling follows a principle of progressive failure:
 | HAL (RFC draft) | VDP uses HAL's underscore convention (`_view`) for inline transport. Compatible with `_links` and `_embedded` |
 | JSON-LD | VDP can coexist with `@context`/`@type` annotations. Template URLs could be expressed as JSON-LD `@id` values |
 | OData4 | VDP uses OData4 instance annotations (`@View.descriptor`) or HTTP headers for compatibility |
-| RFC 8288 (Web Linking) | VDP defines the `view-descriptor` link relation type for the `Link` header |
+| [RFC 8288](https://www.rfc-editor.org/rfc/rfc8288) (Web Linking) | VDP defines the `view-descriptor` link relation type for the `Link` header |
 | HATEOAS | VDP is complementary — HATEOAS tells clients what actions are available, VDP tells clients how to render the result |
 
 ## 12. IANA Considerations
@@ -686,7 +688,7 @@ HX-Request: true
 
 HTTP/1.1 200 OK
 Content-Type: application/json
-View-Template: https://example.com/templates/components/stats-row.html
+View-Template: https://example.com/templates/components/stats-row
 
 {"revenue": 52400, "users": 1923, "orders": 347}
 ```
@@ -735,3 +737,6 @@ The following questions were considered and resolved during the design of this s
 2. **Template parameters** (e.g., passing `{"compact": true}` to a template): **Not in scope.** VDP declares *which* templates to use, nothing more. Configuration, styling, and data binding are the template engine's responsibility. Keeping VDP minimal ensures it works across all rendering frameworks without making assumptions about their capabilities.
 
 3. **Data-to-template mapping** (e.g., specifying which JSON fields feed which template): **Not in scope.** Templates are responsible for extracting data from the API response using their own mechanisms (Qute expressions, JSONPath, data attributes, etc.). VDP maintains a clean separation between template selection and data binding.
+
+*[VDP]: View Descriptor Protocol
+*[HAL]: Hypertext Application Language

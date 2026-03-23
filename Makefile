@@ -4,10 +4,10 @@ start: ## Start mkdocs server
 	@if [[ -f ".venv/bin/activate" && -x ".venv/bin/python" ]]; then \
 		echo "Using virtualenv Python"; \
 		. .venv/bin/activate; \
-		python -m mkdocs serve; \
+		python -m mkdocs serve -a localhost:8884; \
 	else \
 		echo "Virtualenv not found. Using system Python"; \
-		python -m mkdocs serve; \
+		python -m mkdocs serve -a localhost:8884; \
 	fi
 
 build: ## Build mkdocs site

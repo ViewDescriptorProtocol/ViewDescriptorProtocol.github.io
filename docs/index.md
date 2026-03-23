@@ -33,7 +33,7 @@ VDP works with **any rendering framework** — HTML/Qute, SwiftUI, Jetpack Compo
 
 ### Template Binding
 
-The server declares *which* templates render *which* data. Templates handle data binding using their own mechanisms (Qute expressions, JSONPath, etc.).
+The server declares *which* templates render *which* data. Templates handle data binding using their own mechanisms (Qute expressions, mustache, Apache FreeMarker, JSONPath, etc.).
 
 </div>
 
@@ -41,7 +41,7 @@ The server declares *which* templates render *which* data. Templates handle data
 
 ### Recursive Slots
 
-Templates compose via named slots. Each slot value is itself a view descriptor, enabling arbitrarily deep template trees.
+Templates compose via named slots. Each slot value is itself a view descriptor, enabling arbitrarily deep template trees — in other words, templates within templates.
 
 </div>
 
@@ -49,7 +49,7 @@ Templates compose via named slots. Each slot value is itself a view descriptor, 
 
 ### Dual Transport
 
-Embed view descriptors inline (`_view` / `_views` in HAL+JSON) or reference them via HTTP `Link` headers (RFC 8288) for constrained formats like OData4.
+Embed view descriptors inline (`_view` / `_views` in HAL+JSON) or reference them via HTTP `Link` headers ([RFC 8288](https://www.rfc-editor.org/rfc/rfc8288)) for constrained formats like OData4.
 
 </div>
 
@@ -73,7 +73,7 @@ One API response, multiple views. Serve different template trees for desktop, mo
 
 ### Standards-Compatible
 
-Built on REST, HAL, RFC 8288, and OData4. VDP extends existing standards without breaking them.
+Built on REST, HAL, [RFC 8288](https://www.rfc-editor.org/rfc/rfc8288), and OData4. VDP extends existing standards without breaking them.
 
 </div>
 
@@ -85,21 +85,21 @@ A VDP view descriptor tells the client to render a sidebar layout, filling its s
 
 ```json
 {
-  "template": "https://example.com/templates/layouts/sidebar.html",
+  "template": "https://example.com/templates/layouts/sidebar",
   "slots": {
     "mainContent": {
-      "template": "https://example.com/templates/dashboard.html",
+      "template": "https://example.com/templates/dashboard",
       "slots": {
         "statsCards": {
-          "template": "https://example.com/templates/components/card.html"
+          "template": "https://example.com/templates/components/card"
         },
         "activityTable": {
-          "template": "https://example.com/templates/components/table.html"
+          "template": "https://example.com/templates/components/table"
         }
       }
     },
     "sidebarNav": {
-      "template": "https://example.com/templates/components/nav.html"
+      "template": "https://example.com/templates/components/nav"
     }
   }
 }
@@ -113,3 +113,6 @@ VDP is in **early working draft** stage (v0.1, alpha). The specification is bein
 [GitHub Organization](https://github.com/ViewDescriptorProtocol){ .secondary }
 [JSON Schema](schema.md){ .secondary }
 </div>
+
+*[VDP]: View Descriptor Protocol
+*[HAL]: Hypertext Application Language

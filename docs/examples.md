@@ -10,7 +10,7 @@ The simplest possible view descriptor: a single template with no slots.
 
 ```json title="vdp-simple.json"
 {
-  "template": "https://github.com/SiteNetSoft/quarkus-pha/templates/components/forms/form.html"
+  "template": "https://github.com/SiteNetSoft/quarkus-pha/templates/components/forms/form"
 }
 ```
 
@@ -19,7 +19,7 @@ The server might deliver this via the `View-Template` HTTP header:
 ```http
 HTTP/1.1 200 OK
 Content-Type: application/json
-View-Template: https://github.com/SiteNetSoft/quarkus-pha/templates/components/forms/form.html
+View-Template: https://github.com/SiteNetSoft/quarkus-pha/templates/components/forms/form
 
 {"csrfToken": "abc123", "loginUrl": "/auth/login"}
 ```
@@ -34,22 +34,22 @@ A layout template with nested slots, forming a template tree. The sidebar layout
 
 ```json title="vdp-composed.json"
 {
-  "template": "https://github.com/SiteNetSoft/quarkus-pha/templates/layouts/sidebar.html",
+  "template": "https://github.com/SiteNetSoft/quarkus-pha/templates/layouts/sidebar",
   "slots": {
     "sidebarNav": {
-      "template": "https://github.com/SiteNetSoft/quarkus-pha/templates/components/navigation/nav.html"
+      "template": "https://github.com/SiteNetSoft/quarkus-pha/templates/components/navigation/nav"
     },
     "mainContent": {
-      "template": "https://github.com/SiteNetSoft/quarkus-pha/templates/demos/dashboard.html",
+      "template": "https://github.com/SiteNetSoft/quarkus-pha/templates/demos/dashboard",
       "slots": {
         "statsCards": {
-          "template": "https://github.com/SiteNetSoft/quarkus-pha/templates/components/data-display/card.html"
+          "template": "https://github.com/SiteNetSoft/quarkus-pha/templates/components/data-display/card"
         },
         "activityTable": {
-          "template": "https://github.com/SiteNetSoft/quarkus-pha/templates/components/data-display/table.html"
+          "template": "https://github.com/SiteNetSoft/quarkus-pha/templates/components/data-display/table"
         },
         "revenueChart": {
-          "template": "https://github.com/SiteNetSoft/quarkus-pha/templates/components/charts/chart.html"
+          "template": "https://github.com/SiteNetSoft/quarkus-pha/templates/components/charts/chart"
         }
       }
     }
@@ -60,12 +60,12 @@ A layout template with nested slots, forming a template tree. The sidebar layout
 The resulting template tree:
 
 ```
-sidebar.html
-├── sidebarNav → nav.html
-└── mainContent → dashboard.html
-    ├── statsCards → card.html
-    ├── activityTable → table.html
-    └── revenueChart → chart.html
+sidebar
+├── sidebarNav → nav
+└── mainContent → dashboard
+    ├── statsCards → card
+    ├── activityTable → table
+    └── revenueChart → chart
 ```
 
 This descriptor would typically be served as a standalone resource referenced via `Link` header:
@@ -86,18 +86,18 @@ Multiple named views for the same API response. The client selects a view based 
 {
   "views": {
     "default": {
-      "template": "https://github.com/SiteNetSoft/quarkus-pha/templates/demos/dashboard.html",
+      "template": "https://github.com/SiteNetSoft/quarkus-pha/templates/demos/dashboard",
       "slots": {
         "statsCards": {
-          "template": "https://github.com/SiteNetSoft/quarkus-pha/templates/components/data-display/card.html"
+          "template": "https://github.com/SiteNetSoft/quarkus-pha/templates/components/data-display/card"
         },
         "activityTable": {
-          "template": "https://github.com/SiteNetSoft/quarkus-pha/templates/components/data-display/table.html"
+          "template": "https://github.com/SiteNetSoft/quarkus-pha/templates/components/data-display/table"
         }
       }
     },
     "compact": {
-      "template": "https://github.com/SiteNetSoft/quarkus-pha/templates/components/data-display/card.html"
+      "template": "https://github.com/SiteNetSoft/quarkus-pha/templates/components/data-display/card"
     }
   }
 }
@@ -126,21 +126,21 @@ A single slot accepting multiple templates rendered in sequence. Each element is
 
 ```json title="vdp-slot-array.json"
 {
-  "template": "https://github.com/SiteNetSoft/quarkus-pha/templates/layouts/sidebar.html",
+  "template": "https://github.com/SiteNetSoft/quarkus-pha/templates/layouts/sidebar",
   "slots": {
     "mainContent": [
       {
-        "template": "https://github.com/SiteNetSoft/quarkus-pha/templates/components/data-display/card.html"
+        "template": "https://github.com/SiteNetSoft/quarkus-pha/templates/components/data-display/card"
       },
       {
-        "template": "https://github.com/SiteNetSoft/quarkus-pha/templates/components/charts/chart.html"
+        "template": "https://github.com/SiteNetSoft/quarkus-pha/templates/components/charts/chart"
       },
       {
-        "template": "https://github.com/SiteNetSoft/quarkus-pha/templates/components/data-display/table.html"
+        "template": "https://github.com/SiteNetSoft/quarkus-pha/templates/components/data-display/table"
       }
     ],
     "sidebarNav": {
-      "template": "https://github.com/SiteNetSoft/quarkus-pha/templates/components/navigation/nav.html"
+      "template": "https://github.com/SiteNetSoft/quarkus-pha/templates/components/navigation/nav"
     }
   }
 }
@@ -148,8 +148,8 @@ A single slot accepting multiple templates rendered in sequence. Each element is
 
 The `mainContent` slot receives an array of three view descriptors. The client MUST render them in order:
 
-1. `card.html`
-2. `chart.html`
-3. `table.html`
+1. `card`
+2. `chart`
+3. `table`
 
 Each array element can itself contain nested `slots` for further composition.
