@@ -70,4 +70,5 @@ markdown_extensions:
       permalink: true
   - attr_list
   - md_in_html
+  - abbr
   - def_list
