@@ -28,7 +28,7 @@ View-Template: https://github.com/SiteNetSoft/quarkus-pha/templates/components/f
 
 ## Composed View Descriptor
 
-A layout template with nested slots, forming a template tree. The sidebar layout has two slots: `sidebarNav` for navigation, and `mainContent` for a dashboard that itself contains three further slots.
+A layout template with nested slots, forming a template tree. The sidebar layout has two slots: `sidebarNav` for navigation and `mainContent` for a dashboard that itself contains three further slots.
 
 **Use case:** A dashboard page with a sidebar navigation, stats cards, an activity table, and a chart.
 
@@ -80,7 +80,7 @@ Link: <https://example.com/views/dashboard.json>; rel="view-descriptor"
 
 Multiple named views for the same API response. The client selects a view based on context (device class, user preference, layout mode).
 
-**Use case:** A product page with a full detail view and a compact card view.
+**Use case:** A dashboard with a full detail view and a compact card view.
 
 ```json title="vdp-multi-view.json"
 {

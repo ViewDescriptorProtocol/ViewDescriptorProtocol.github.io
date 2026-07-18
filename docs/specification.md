@@ -5,11 +5,11 @@
 
 ## Abstract
 
-The View Descriptor Protocol (VDP) defines a standard mechanism for associating API data responses with the templates that should render them. A **view descriptor** is a JSON structure that identifies a root template by URL and declares how sub-templates compose into named slots, forming a recursive template tree. View descriptors can be transported via HTTP headers (for constrained formats like OData4) or inline in the response body (for flexible formats like HAL+JSON). The protocol is framework-agnostic — templates can be HTML/Qute, SwiftUI views, Compose layouts, or any other rendering format.
+The View Descriptor Protocol (VDP) defines a standard mechanism for associating API data responses with the templates that should render them. A **view descriptor** is a JSON structure that names a root template by URL and declares which sub-templates fill its named slots. Because each slot is itself described by a view descriptor, descriptors form a recursive template tree. View descriptors can be transported via HTTP headers (for constrained formats like OData4) or inline in the response body (for flexible formats like HAL+JSON). The protocol is framework-agnostic — templates can be HTML/Qute, SwiftUI views, Compose layouts, or any other rendering format.
 
 ## 1. Problem Statement
 
-REST APIs return structured data (JSON, XML) that carries no presentation information. The client must independently decide how to render this data — typically by hardcoding template choices into client logic. This creates tight coupling between API consumers and their rendering layer.
+REST APIs return structured data (JSON, XML) that carries no presentation information. Each client must decide on its own how to render that data — typically by hardcoding template choices into client code. As a result, every presentation change requires updating each client, and every client maintains its own copy of the same data-to-template mapping.
 
 **VDP solves this by letting the server declare:**
 
@@ -28,8 +28,8 @@ REST APIs return structured data (JSON, XML) that carries no presentation inform
 - **Template URL**: A URL identifying a template resource. The URL MUST resolve to a renderable template in the client's rendering framework.
 - **Slot**: A named insertion point in a template where a sub-template can be composed. Slot names correspond to the template's own insertion point identifiers (e.g., Qute's `{#insert slotName}`, HTML's `<slot name="slotName">`).
 - **View Descriptor Resource**: A standalone JSON document containing a view descriptor, addressable by its own URL, cacheable independently of the data it describes.
-- **Static Composition**: Template includes that are hardcoded within the template itself (e.g., a layout always including its `_head` partial). VDP does not manage these — they are the template's internal concern.
-- **Dynamic Composition**: Template slots whose content varies per API response. VDP manages these.
+- **Static Composition**: Composition written directly into a template's source — for example, a layout that always includes its `_head` partial. VDP does not describe static composition; it is internal to the template.
+- **Dynamic Composition**: Composition that changes per API response — a slot whose template is chosen by the server at request time. These are the slots a view descriptor declares.
 
 ## 3. View Descriptor Format
 
@@ -99,7 +99,7 @@ Since each slot value is itself a view descriptor, composition nests to arbitrar
 
 ### 3.4 Multiple Views
 
-A single API response may offer multiple views (e.g., a summary view and a detail view, or views for different device classes). Use a named object at the top level:
+A single API response may offer multiple views (e.g., a summary view and a detail view, or views for different device classes). Declare them as a named map under the `views` key:
 
 ```json
 {
@@ -187,8 +187,8 @@ The client fetches `https://example.com/views/dashboard.json` to get the view de
 
 - Keeps the data payload completely clean
 - Works with **any** data format (JSON, XML, OData4, GraphQL, Protocol Buffers)
-- The view descriptor resource is independently cacheable
-- Uses existing web standards ([RFC 8288](https://www.rfc-editor.org/rfc/rfc8288) Link Relations)
+- Makes the view descriptor independently cacheable
+- Builds on existing web standards ([RFC 8288](https://www.rfc-editor.org/rfc/rfc8288) Link Relations)
 
 **For simple cases** (single template, no composition), a shorthand header is also defined:
 
@@ -325,10 +325,10 @@ Given an API response at `https://example.com/api/dashboard` with an inline view
 ```json
 {
   "_view": {
-    "template": "templates/layouts/sidebar",
+    "template": "/templates/layouts/sidebar",
     "slots": {
       "mainContent": {
-        "template": "templates/components/card"
+        "template": "/templates/components/card"
       }
     }
   }
@@ -336,8 +336,10 @@ Given an API response at `https://example.com/api/dashboard` with an inline view
 ```
 
 Both template URLs resolve against `https://example.com/api/dashboard`:
-- `templates/layouts/sidebar` → `https://example.com/templates/layouts/sidebar`
-- `templates/components/card` → `https://example.com/templates/components/card`
+- `/templates/layouts/sidebar` → `https://example.com/templates/layouts/sidebar`
+- `/templates/components/card` → `https://example.com/templates/components/card`
+
+Note that resolution follows RFC 3986 exactly: a reference without a leading slash resolves relative to the base URL's path, so `templates/components/card` would yield `https://example.com/api/templates/components/card` instead.
 
 Servers SHOULD use absolute URLs when view descriptors may be consumed by multiple clients with different base URL contexts.
 
@@ -357,23 +359,23 @@ This keeps view descriptors small and avoids pushing selection logic into client
 
 ## 6. Template Requirements
 
-VDP is agnostic to the template language. However, templates used with VDP MUST satisfy one requirement: **named insertion points (slots) that can be filled externally**.
+VDP is agnostic to the template language. However, a template used with VDP MUST meet one requirement: **it exposes named insertion points (slots) that can be filled from outside the template**.
 
 ### 6.1 Framework Slot Mappings
 
-| Framework | Slot Mechanism | Example |
-|-----------|---------------|---------|
-| Qute | `{#insert slotName}{/insert}` | `{#insert mainContent}Default{/insert}` |
-| HTML `<template>` | `<slot name="slotName">` | `<slot name="mainContent"></slot>` |
-| HTMT | `ht-template="slotName"` | `<div ht-template="mainContent"></div>` |
-| Thymeleaf | `th:fragment` / `th:replace` | `<div th:replace="~{slotName}"></div>` |
-| JSX/React | `props.children` or named props | `{props.mainContent}` |
-| SwiftUI | `@ViewBuilder` parameters | `var mainContent: () -> Content` |
-| Jetpack Compose | `@Composable` slot parameters | `mainContent: @Composable () -> Unit` |
+| Framework         | Slot Mechanism                  | Example                                 |
+|-------------------|---------------------------------|-----------------------------------------|
+| Qute              | `{#insert slotName}{/insert}`   | `{#insert mainContent}Default{/insert}` |
+| HTML `<template>` | `<slot name="slotName">`        | `<slot name="mainContent"></slot>`      |
+| HTMT              | `ht-template="slotName"`        | `<div ht-template="mainContent"></div>` |
+| Thymeleaf         | `th:fragment` / `th:replace`    | `<div th:replace="~{slotName}"></div>`  |
+| JSX/React         | `props.children` or named props | `{props.mainContent}`                   |
+| SwiftUI           | `@ViewBuilder` parameters       | `var mainContent: () -> Content`        |
+| Jetpack Compose   | `@Composable` slot parameters   | `mainContent: @Composable () -> Unit`   |
 
 ### 6.2 Static vs Dynamic Slots
 
-Not all insertion points in a template need to be managed by VDP. Templates commonly include static partials (like a shared `_head` or a footer) that are hardcoded. Only slots that vary per API response need to appear in the view descriptor.
+Not every insertion point in a template needs to appear in the view descriptor. Templates commonly include partials that never change — a shared `_head`, a footer — and those stay hardcoded in the template (static composition, Section 2). Only slots whose content varies per API response belong in the view descriptor (dynamic composition).
 
 ## 7. Examples
 
@@ -514,7 +516,7 @@ This is the pattern used by **quarkus-pha**: Quarkus acts as the BFF, fetching d
 4. **Identify slot insertion points** in the template.
 5. **For each slot** declared in the view descriptor:
     a. Fetch the sub-template from its `template` URL.
-    b. If the sub-template's view descriptor has `slots`, recurse (go to step 4).
+    b. If the slot's view descriptor itself declares `slots`, repeat steps 3–5 for that descriptor.
     c. Insert the resolved sub-template into the slot.
 6. **Render** the composed template tree with the API response data.
 
@@ -551,7 +553,7 @@ When a view descriptor is malformed (invalid JSON, missing required `template` f
 
 ### 9.4 Graceful Degradation
 
-Error handling follows a principle of progressive failure:
+Error handling follows the principle that a failure stays as local as possible:
 
 1. A single slot failure does not prevent the rest of the template tree from rendering.
 2. A root template failure prevents rendering entirely — the client falls back to raw data or a default template.
@@ -600,7 +602,7 @@ APIs SHOULD advertise VDP support so clients can detect it programmatically.
 
 ### 13.1 OPTIONS Response
 
-An API endpoint supporting VDP MUST include the `VDP` token in the `Allow` or a custom header in its `OPTIONS` response:
+An API endpoint supporting VDP MUST advertise it in its `OPTIONS` response, using the `VDP-Support` and `VDP-Version` headers:
 
 ```http
 OPTIONS /api/dashboard HTTP/1.1
