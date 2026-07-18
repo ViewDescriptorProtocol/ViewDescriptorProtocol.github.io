@@ -23,7 +23,7 @@ hide:
 
 ## What is VDP?
 
-The **View Descriptor Protocol** defines a standard way for APIs to tell clients which templates to use for rendering data. A view descriptor is a JSON structure that identifies a root template by URL and declares how sub-templates compose into named **slots**, forming a recursive template tree.
+The **View Descriptor Protocol** defines a standard way for APIs to tell clients which templates to use for rendering data. A view descriptor is a JSON structure that names a root template by URL and declares which sub-templates fill its named **slots**. Because each slot is itself described by a view descriptor, descriptors form a recursive template tree.
 
 VDP works with **any rendering framework** — HTML/Qute, SwiftUI, Jetpack Compose, React, or anything else that supports named insertion points.
 
@@ -57,7 +57,7 @@ Embed view descriptors inline (`_view` / `_views` in HAL+JSON) or reference them
 
 ### Cacheable Descriptors
 
-View descriptors are standalone resources with their own URLs, independently cacheable from the data they describe.
+View descriptors are standalone resources with their own URLs, cacheable independently of the data they describe.
 
 </div>
 
@@ -65,7 +65,7 @@ View descriptors are standalone resources with their own URLs, independently cac
 
 ### Cross-Platform
 
-One API response, multiple views. Serve different template trees for desktop, mobile, compact, and full layouts from the same data endpoint.
+One API response, multiple views. Serve different template trees — desktop, mobile, compact — from the same data endpoint.
 
 </div>
 
