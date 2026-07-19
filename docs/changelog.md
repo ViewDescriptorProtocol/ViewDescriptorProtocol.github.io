@@ -14,6 +14,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Changed
 
+- 2026-07-19 — The RVST-era documentation moved under `docs/archive/` with an archived-content notice on each document, and the cross-platform support diagram was redrawn with a VDP `_view` payload.
 - 2026-07-19 — Discovery document `endpoints` entries now use a `descriptor` field holding the URL of the endpoint's view descriptor resource; the field was previously named `template` although it never held a template URL. The schema's `DiscoveryDocument` definition was updated to match.
 - 2026-07-19 — Schema `$id` and `$ref` examples moved from `vdp.dev` to `https://vdprotocol.org/schemas/vdp.v0-1.schema.json`.
 - 2026-07-19 — Corrected the relative URL resolution example (Section 5.4): per RFC 3986, references without a leading slash resolve under the base URL's path; the example now uses root-relative paths and notes the distinction.
@@ -23,7 +24,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Deprecated
 
-- RVST (Representational View State Transfer), VDP's predecessor, is archived in this repository: schemas under `schemas/`, examples under `examples/example-*.json`, and the unfinished HAL variant draft as `examples/rvst-hal-draft.json`. The VDP specification supersedes RVST.
+- RVST (Representational View State Transfer), VDP's predecessor, is archived in this repository: schemas under `schemas/`, examples under `examples/example-*.json`, the unfinished HAL variant draft as `examples/rvst-hal-draft.json`, and documentation under `docs/archive/`. The VDP specification supersedes RVST.
 
 *[VDP]: View Descriptor Protocol
 *[HAL]: Hypertext Application Language
