@@ -19,6 +19,7 @@ A templating engine using JSONPath-based `ht-*` data attributes for dynamic data
 | `ht-show` / `ht-hide` | Conditional visibility |
 | `ht-switch` / `ht-case` | Switch-case rendering |
 | `ht-class-[name]` | Conditional CSS classes |
+| `ht-root-[attribute]` | Root-scoped variant of any attribute, binding against the root of the data instead of the local scope |
 
 All attributes use JSONPath expressions (e.g., `$.user.name`) for data binding.
 
