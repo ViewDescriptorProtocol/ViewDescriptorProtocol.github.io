@@ -627,10 +627,10 @@ Content-Type: application/vdp+json
   "version": "0.1",
   "endpoints": {
     "/api/dashboard": {
-      "template": "https://example.com/views/dashboard.json"
+      "descriptor": "https://example.com/views/dashboard.json"
     },
     "/api/products": {
-      "template": "https://example.com/views/product-list.json"
+      "descriptor": "https://example.com/views/product-list.json"
     }
   },
   "trustedTemplateDomains": [
@@ -639,7 +639,7 @@ Content-Type: application/vdp+json
 }
 ```
 
-This allows clients to prefetch view descriptors and preload templates before making data requests. The `trustedTemplateDomains` field provides the template URL allowlist referenced in Section 10.
+Each entry in `endpoints` maps an API path to the URL of its view descriptor resource (`descriptor`). This allows clients to prefetch view descriptors and preload templates before making data requests. The `trustedTemplateDomains` field provides the template URL allowlist referenced in Section 10.
 
 ### 13.3 OpenAPI Extension
 
