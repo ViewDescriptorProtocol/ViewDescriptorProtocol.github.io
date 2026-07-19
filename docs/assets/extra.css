@@ -12,6 +12,17 @@
   --md-primary-fg-color--dark: #0a1628;
 }
 
+/* Material derives the body link color from the primary color, which is a
+   near-black navy here — links must not blend into the text (light mode)
+   or vanish on the dark background (slate). */
+[data-md-color-scheme="default"] {
+  --md-typeset-a-color: #1565c0;
+}
+
+[data-md-color-scheme="slate"] {
+  --md-typeset-a-color: #64b5f6;
+}
+
 /* Hero section on landing page */
 .md-typeset .vdp-hero {
   text-align: center;
