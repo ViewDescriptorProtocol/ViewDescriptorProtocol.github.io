@@ -9,7 +9,7 @@ The VDP JSON Schema defines the structure of view descriptor documents. It uses 
 ```json
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "$id": "https://vdp.dev/schemas/vdp.v0-1.schema.json",
+  "$id": "https://vdprotocol.org/schemas/vdp.v0-1.schema.json",
   "title": "View Descriptor Protocol (VDP) v0.1",
   "description": "Schema for VDP view descriptor documents. Validates standalone ViewDescriptor and MultiViewDescriptor payloads. Definitions in $defs can be referenced by other schemas for inline body transport (_view / _views).",
 
@@ -89,9 +89,18 @@ The VDP JSON Schema defines the structure of view descriptor documents. It uses 
         },
         "endpoints": {
           "type": "object",
-          "description": "A map of API endpoint paths to their default view descriptors.",
+          "description": "A map of API endpoint paths to the URL of each endpoint's view descriptor resource.",
           "additionalProperties": {
-            "$ref": "#/$defs/ViewDescriptor"
+            "type": "object",
+            "properties": {
+              "descriptor": {
+                "type": "string",
+                "format": "uri",
+                "description": "URL of the view descriptor resource for this endpoint."
+              }
+            },
+            "required": ["descriptor"],
+            "additionalProperties": false
           }
         },
         "trustedTemplateDomains": {
@@ -152,7 +161,7 @@ Served at `/.well-known/vdp` for API discovery.
 | Property | Type | Required | Description |
 |----------|------|----------|-------------|
 | `version` | `string` | Yes | VDP specification version |
-| `endpoints` | `object` | No | Map of API paths to their default view descriptors |
+| `endpoints` | `object` | No | Map of API paths to `{ "descriptor": <url> }` entries pointing at each endpoint's view descriptor resource |
 | `trustedTemplateDomains` | `string[]` | No | Allowlist of base URLs for template loading |
 
 ## Validation
@@ -162,7 +171,7 @@ The schema validates standalone VDP documents (view descriptor JSON files). For 
 ```json
 {
   "properties": {
-    "_view": { "$ref": "https://vdp.dev/schemas/vdp.v0-1.schema.json#/$defs/ViewDescriptor" }
+    "_view": { "$ref": "https://vdprotocol.org/schemas/vdp.v0-1.schema.json#/$defs/ViewDescriptor" }
   }
 }
 ```
