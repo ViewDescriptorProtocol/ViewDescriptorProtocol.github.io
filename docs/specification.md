@@ -1,7 +1,7 @@
 # View Descriptor Protocol (VDP)
 
 **Status:** Working Draft
-**Version:** 0.1.0
+**Version:** 0.1
 
 ## Abstract
 
@@ -49,13 +49,13 @@ When a template has named insertion points that should be filled dynamically, th
 
 ```json
 {
-  "template": "https://github.com/SiteNetSoft/quarkus-pha/templates/layouts/sidebar",
+  "template": "https://templates.example.com/layouts/sidebar",
   "slots": {
     "mainContent": {
-      "template": "https://github.com/SiteNetSoft/quarkus-pha/templates/components/data-display/card"
+      "template": "https://templates.example.com/components/data-display/card"
     },
     "sidebarNav": {
-      "template": "https://github.com/SiteNetSoft/quarkus-pha/templates/components/navigation/nav"
+      "template": "https://templates.example.com/components/navigation/nav"
     }
   }
 }
@@ -69,29 +69,29 @@ Since each slot value is itself a view descriptor, composition nests to arbitrar
 
 ```json
 {
-  "template": "https://github.com/SiteNetSoft/quarkus-pha/templates/layouts/sidebar",
+  "template": "https://templates.example.com/layouts/sidebar",
   "slots": {
     "mainContent": {
-      "template": "https://github.com/SiteNetSoft/quarkus-pha/templates/demos/dashboard",
+      "template": "https://templates.example.com/demos/dashboard",
       "slots": {
         "statsRow": {
-          "template": "https://github.com/SiteNetSoft/quarkus-pha/templates/components/data-display/card"
+          "template": "https://templates.example.com/components/data-display/card"
         },
         "activityTable": {
-          "template": "https://github.com/SiteNetSoft/quarkus-pha/templates/components/data-display/table"
+          "template": "https://templates.example.com/components/data-display/table"
         },
         "chart": {
-          "template": "https://github.com/SiteNetSoft/quarkus-pha/templates/components/charts/chart",
+          "template": "https://templates.example.com/components/charts/chart",
           "slots": {
             "legend": {
-              "template": "https://github.com/SiteNetSoft/quarkus-pha/templates/components/charts/chart-legend"
+              "template": "https://templates.example.com/components/charts/chart-legend"
             }
           }
         }
       }
     },
     "sidebarNav": {
-      "template": "https://github.com/SiteNetSoft/quarkus-pha/templates/components/navigation/nav"
+      "template": "https://templates.example.com/components/navigation/nav"
     }
   }
 }
@@ -122,7 +122,9 @@ A single API response may offer multiple views (e.g., a summary view and a detai
 }
 ```
 
-When only a single view is needed, the top-level object IS the view descriptor (no `views` wrapper). When multiple views are present, the `views` key wraps them. A client SHOULD use `default` when no specific view is requested.
+When only a single view is needed, the top-level object IS the view descriptor (no `views` wrapper). When multiple views are present, the `views` key wraps them.
+
+How a client chooses among named views is out of scope: view names are agreed between server and client out of band, and the client selects based on its own context (device class, container size, user preference, etc.). A client SHOULD use the `default` view when it has no reason to select another. If no `default` view exists and the client has no basis for choosing, it MUST select one of the available views; the choice is client-defined.
 
 ### 3.5 Slot Arrays
 
@@ -130,21 +132,21 @@ A single slot can accept multiple templates, rendered in sequence within the ins
 
 ```json
 {
-  "template": "https://github.com/SiteNetSoft/quarkus-pha/templates/layouts/sidebar",
+  "template": "https://templates.example.com/layouts/sidebar",
   "slots": {
     "mainContent": [
       {
-        "template": "https://github.com/SiteNetSoft/quarkus-pha/templates/components/data-display/card"
+        "template": "https://templates.example.com/components/data-display/card"
       },
       {
-        "template": "https://github.com/SiteNetSoft/quarkus-pha/templates/components/charts/chart"
+        "template": "https://templates.example.com/components/charts/chart"
       },
       {
-        "template": "https://github.com/SiteNetSoft/quarkus-pha/templates/components/data-display/table"
+        "template": "https://templates.example.com/components/data-display/table"
       }
     ],
     "sidebarNav": {
-      "template": "https://github.com/SiteNetSoft/quarkus-pha/templates/components/navigation/nav"
+      "template": "https://templates.example.com/components/navigation/nav"
     }
   }
 }
@@ -208,10 +210,10 @@ When the data format is flexible (e.g., HAL+JSON, custom APIs), embed the view d
     "self": { "href": "/api/dashboard" }
   },
   "_view": {
-    "template": "https://github.com/SiteNetSoft/quarkus-pha/templates/demos/dashboard",
+    "template": "https://templates.example.com/demos/dashboard",
     "slots": {
       "statsRow": {
-        "template": "https://github.com/SiteNetSoft/quarkus-pha/templates/components/data-display/card"
+        "template": "https://templates.example.com/components/data-display/card"
       }
     }
   },
@@ -266,6 +268,8 @@ When a view descriptor is provided via multiple mechanisms, precedence is:
 2. `Link` header with `rel="view-descriptor"`
 3. `View-Template` header
 
+If both `_view` and `_views` appear in the same response, `_views` takes precedence and `_view` MUST be ignored.
+
 ## 5. View Descriptor Resources
 
 ### 5.1 Media Type
@@ -309,10 +313,11 @@ Servers MUST NOT use the media type `version` parameter to version individual vi
 
 ### 5.4 URL Resolution
 
-Template URLs in a view descriptor MAY be relative references (RFC 3986 Section 4.2). Clients MUST resolve relative URLs using the following base URL, in order of precedence:
+Template URLs in a view descriptor MAY be relative references (RFC 3986 Section 4.2). Clients MUST resolve relative URLs against a base URL determined by the transport that delivered the descriptor:
 
 1. **Standalone view descriptor resource**: The URL of the view descriptor resource itself (i.e., the URL used to fetch it via the `Link` header).
 2. **Inline transport** (`_view` / `_views`): The URL of the API response containing the view descriptor.
+3. **`View-Template` header**: The URL of the API response carrying the header.
 
 Nested slot template URLs resolve against the same base URL as the root template URL — the base does not change at each nesting level.
 
@@ -345,10 +350,10 @@ Servers SHOULD use absolute URLs when view descriptors may be consumed by multip
 
 When different clients require different templates (e.g., HTML for web, Compose for Android, SwiftUI for iOS), the server SHOULD use standard HTTP content negotiation to select the appropriate view descriptor. VDP does not define a mechanism for shipping multiple platform variants in a single response — the server selects and returns one view descriptor per request.
 
-Servers MAY use the `Accept` header, custom headers, or query parameters to determine the client's rendering platform:
+Negotiation applies to whichever request returns the view descriptor: the fetch of the standalone view descriptor resource (Section 4.1), or the API request itself when the descriptor is inline (Section 4.2). Servers MAY use custom headers or query parameters to determine the client's rendering platform:
 
 ```http
-GET /api/dashboard HTTP/1.1
+GET /views/dashboard.json HTTP/1.1
 Accept: application/vdp+json
 X-VDP-Platform: android
 ```
@@ -382,7 +387,7 @@ Not every insertion point in a template needs to appear in the view descriptor. 
 ```http
 HTTP/1.1 200 OK
 Content-Type: application/json
-View-Template: https://github.com/SiteNetSoft/quarkus-pha/templates/components/forms/form
+View-Template: https://templates.example.com/components/forms/form
 
 {
   "csrfToken": "abc123",
@@ -401,7 +406,7 @@ View-Template: https://github.com/SiteNetSoft/quarkus-pha/templates/components/f
 ```http
 HTTP/1.1 200 OK
 Content-Type: application/hal+json
-Link: <https://github.com/SiteNetSoft/quarkus-pha/views/dashboard.json>; rel="view-descriptor"
+Link: <https://example.com/views/dashboard.json>; rel="view-descriptor"
 
 {
   "_links": { "self": { "href": "/api/dashboard" } },
@@ -418,22 +423,22 @@ Link: <https://github.com/SiteNetSoft/quarkus-pha/views/dashboard.json>; rel="vi
 
 ```json
 {
-  "template": "https://github.com/SiteNetSoft/quarkus-pha/templates/layouts/sidebar",
+  "template": "https://templates.example.com/layouts/sidebar",
   "slots": {
     "sidebarNav": {
-      "template": "https://github.com/SiteNetSoft/quarkus-pha/templates/components/navigation/nav"
+      "template": "https://templates.example.com/components/navigation/nav"
     },
     "mainContent": {
-      "template": "https://github.com/SiteNetSoft/quarkus-pha/templates/demos/dashboard",
+      "template": "https://templates.example.com/demos/dashboard",
       "slots": {
         "statsCards": {
-          "template": "https://github.com/SiteNetSoft/quarkus-pha/templates/components/data-display/card"
+          "template": "https://templates.example.com/components/data-display/card"
         },
         "activityTable": {
-          "template": "https://github.com/SiteNetSoft/quarkus-pha/templates/components/data-display/table"
+          "template": "https://templates.example.com/components/data-display/table"
         },
         "revenueChart": {
-          "template": "https://github.com/SiteNetSoft/quarkus-pha/templates/components/charts/chart"
+          "template": "https://templates.example.com/components/charts/chart"
         }
       }
     }
@@ -529,6 +534,7 @@ When fetching a template URL fails (HTTP 404, 5xx, network error, timeout):
 - Clients MUST NOT fail the entire render if a single slot's template is unavailable.
 - Clients SHOULD skip the unavailable slot and render the remaining template tree.
 - Clients MAY display a placeholder or the template's default slot content in place of the failed slot.
+- For slot arrays (Section 3.5), a failed array element is skipped; the remaining elements render in their declared order.
 - Clients SHOULD log or report the failure for diagnostic purposes.
 
 ### 9.2 Slot Name Mismatch
@@ -557,11 +563,11 @@ Error handling follows the principle that a failure stays as local as possible:
 
 ## 10. Security Considerations
 
-- **Template URL validation**: Clients MUST validate template URLs against an allowlist of trusted domains. Rendering arbitrary templates from untrusted sources is a code injection risk.
+- **Template URL validation**: Clients MUST validate template URLs against an allowlist of trusted URL prefixes (see `trustedTemplateUrls`, Section 13.2). Rendering arbitrary templates from untrusted sources is a code injection risk.
 - **CORS**: Template resources served cross-origin MUST include appropriate CORS headers.
-- **Content Security Policy**: Template URLs SHOULD be included in the `script-src` or `style-src` CSP directives as appropriate.
+- **Content Security Policy**: Browser clients fetching templates at runtime SHOULD include template origins in the `connect-src` CSP directive. `script-src` or `style-src` apply only where templates are loaded as executable scripts or stylesheets.
 - **Template sandboxing**: Clients SHOULD render templates in a sandboxed context to prevent template injection attacks.
-- **HTTPS**: Template URLs MUST use HTTPS in production. Clients SHOULD reject HTTP template URLs.
+- **HTTPS**: Template URLs MUST use HTTPS. Clients SHOULD reject `http:` template URLs, with an exception permitted for loopback addresses during local development.
 
 ## 11. Relationship to Existing Standards
 
@@ -598,7 +604,7 @@ APIs SHOULD advertise VDP support so clients can detect it programmatically.
 
 ### 13.1 OPTIONS Response
 
-An API endpoint supporting VDP MUST advertise it in its `OPTIONS` response, using the `VDP-Support` and `VDP-Version` headers:
+An API endpoint supporting VDP SHOULD advertise it in its `OPTIONS` response, using the `VDP-Support` and `VDP-Version` headers:
 
 ```http
 OPTIONS /api/dashboard HTTP/1.1
@@ -617,7 +623,7 @@ APIs MAY expose a discovery document at `/.well-known/vdp`:
 GET /.well-known/vdp HTTP/1.1
 
 HTTP/1.1 200 OK
-Content-Type: application/vdp+json
+Content-Type: application/json
 
 {
   "version": "0.1",
@@ -629,13 +635,17 @@ Content-Type: application/vdp+json
       "descriptor": "https://example.com/views/product-list.json"
     }
   },
-  "trustedTemplateDomains": [
-    "https://github.com/SiteNetSoft/quarkus-pha"
+  "trustedTemplateUrls": [
+    "https://templates.example.com/"
   ]
 }
 ```
 
-Each entry in `endpoints` maps an API path to the URL of its view descriptor resource (`descriptor`). This allows clients to prefetch view descriptors and preload templates before making data requests. The `trustedTemplateDomains` field provides the template URL allowlist referenced in Section 10.
+The discovery document is not a view descriptor and MUST NOT be served as `application/vdp+json`; it is served as plain `application/json`.
+
+Each entry in `endpoints` maps an API path to the URL of its view descriptor resource (`descriptor`). This allows clients to prefetch view descriptors and preload templates before making data requests.
+
+The `trustedTemplateUrls` field provides the template URL allowlist referenced in Section 10. Each entry is a URL prefix: a template URL is trusted if and only if, after RFC 3986 normalization, it begins with one of the listed entries. Entries SHOULD end with a trailing slash so that `https://templates.example.com/` cannot accidentally match `https://templates.example.com.evil.host/`.
 
 ### 13.3 OpenAPI Extension
 
