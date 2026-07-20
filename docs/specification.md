@@ -296,18 +296,16 @@ Template URLs themselves are also cacheable resources. Clients SHOULD cache reso
 
 ### 5.3 Versioning
 
-View descriptors can be versioned by URL convention:
+This section covers versioning of individual view descriptor resources (e.g., revision 2 of the dashboard view). It is distinct from the VDP protocol version, which is carried by the `version` parameter of the `application/vdp+json` media type (Section 12.2) and the discovery mechanisms (Section 13).
+
+View descriptor resources are versioned by URL convention:
 
 ```
 https://example.com/views/v2/dashboard.json
 https://example.com/views/dashboard.json?v=2
 ```
 
-Or by content negotiation using the `Accept` header with a version parameter:
-
-```
-Accept: application/vdp+json; version=2
-```
+Servers MUST NOT use the media type `version` parameter to version individual view descriptor resources — it identifies the protocol version, not a resource revision.
 
 ### 5.4 URL Resolution
 
@@ -591,7 +589,7 @@ This specification requests registration of:
 - **Type name:** application
 - **Subtype name:** vdp+json
 - **Required parameters:** None
-- **Optional parameters:** `version`
+- **Optional parameters:** `version` — the VDP protocol version the payload conforms to (e.g., `application/vdp+json; version=0.1`). This is the same value advertised by the `VDP-Version` header and the well-known discovery document (Section 13). It does not version individual view descriptor resources (see Section 5.3).
 - **Reference:** This specification
 
 ## 13. Discovery
