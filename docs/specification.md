@@ -26,7 +26,7 @@ REST APIs return structured data (JSON, XML) that carries no presentation inform
 
 - **View Descriptor**: A JSON object that describes a template tree — a root template URL and its slot assignments.
 - **Template URL**: A URL identifying a template resource. The URL MUST resolve to a renderable template in the client's rendering framework.
-- **Slot**: A named insertion point in a template where a sub-template can be composed. Slot names correspond to the template's own insertion point identifiers (e.g., Qute's `{#insert slotName}`, HTML's `<slot name="slotName">`).
+- **Slot**: A named insertion point in a template where a sub-template can be composed. Slot names correspond to the template's own insertion point identifiers (e.g., Qute's `{#insert slotName}`).
 - **View Descriptor Resource**: A standalone JSON document containing a view descriptor, addressable by its own URL, cacheable independently of the data it describes.
 - **Static Composition**: Composition written directly into a template's source — for example, a layout that always includes its `_head` partial. VDP does not describe static composition; it is internal to the template.
 - **Dynamic Composition**: Composition that changes per API response — a slot whose template is chosen by the server at request time. These are the slots a view descriptor declares.
@@ -366,8 +366,6 @@ VDP is agnostic to the template language. However, a template used with VDP MUST
 | Framework         | Slot Mechanism                  | Example                                 |
 |-------------------|---------------------------------|-----------------------------------------|
 | Qute              | `{#insert slotName}{/insert}`   | `{#insert mainContent}Default{/insert}` |
-| HTML `<template>` | `<slot name="slotName">`        | `<slot name="mainContent"></slot>`      |
-| HTMT              | `ht-template="slotName"`        | `<div ht-template="mainContent"></div>` |
 | Thymeleaf         | `th:fragment` / `th:replace`    | `<div th:replace="~{slotName}"></div>`  |
 | JSX/React         | `props.children` or named props | `{props.mainContent}`                   |
 | SwiftUI           | `@ViewBuilder` parameters       | `var mainContent: () -> Content`        |
