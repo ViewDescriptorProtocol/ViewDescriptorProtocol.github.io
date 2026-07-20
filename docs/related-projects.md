@@ -2,34 +2,6 @@
 
 VDP is part of an ecosystem of specifications and implementations for server-driven UI rendering.
 
-## HTMT — HyperText Markup Templating
-
-[GitHub](https://github.com/ViewDescriptorProtocol/HTMT){ .md-button }
-
-A templating engine using JSONPath-based `ht-*` data attributes for dynamic data binding in HTML/HTMX. HTMT extends standard HTML with custom attributes for declarative rendering and state management directly in the markup.
-
-**Key attributes:**
-
-| Attribute | Description |
-|-----------|-------------|
-| `ht-bind` | Bind data to element content |
-| `ht-loop` | Iterate over arrays |
-| `ht-template` | Reusable template blocks |
-| `ht-attr-[name]` | Bind to HTML attributes |
-| `ht-show` / `ht-hide` | Conditional visibility |
-| `ht-switch` / `ht-case` | Switch-case rendering |
-| `ht-class-[name]` | Conditional CSS classes |
-| `ht-root-[attribute]` | Root-scoped variant of any attribute, binding against the root of the data instead of the local scope |
-
-All attributes use JSONPath expressions (e.g., `$.user.name`) for data binding.
-
-HTMT templates can be used as VDP template targets — VDP declares *which* HTMT templates to render, while HTMT handles the actual data binding.
-
-!!! note "Status"
-    Working Draft (Alpha)
-
----
-
 ## js-HTF — JavaScript Hierarchical Template Framework
 
 [GitHub](https://github.com/ViewDescriptorProtocol/js-HTF){ .md-button }
