@@ -1,0 +1,51 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://vdprotocol.org/schemas/vdp-discovery.v0-1.schema.json",
+  "title": "View Descriptor Protocol (VDP) v0.1 Discovery Document",
+  "description": "Schema for the VDP discovery document served at /.well-known/vdp as application/vdp-discovery+json (spec Section 13.2). Unrecognized members are permitted everywhere per the discovery extensibility clause: clients MUST ignore members they do not recognize.",
+
+  "type": "object",
+  "properties": {
+    "version": {
+      "type": "string",
+      "description": "The VDP protocol version supported by the API (e.g. \"0.1\"). Matches the value advertised by the VDP-Version header.",
+      "minLength": 1
+    },
+    "endpoints": {
+      "type": "object",
+      "description": "Maps API paths to their view descriptor resources. Keys are absolute paths relative to the origin serving the discovery document, and MAY be RFC 6570 Level 1 URI Templates (e.g. /api/products/{id}).",
+      "propertyNames": {
+        "pattern": "^/"
+      },
+      "additionalProperties": {
+        "$ref": "#/$defs/EndpointEntry"
+      }
+    },
+    "trustedTemplateUrls": {
+      "type": "array",
+      "description": "Template URL allowlist (spec Section 10). Each entry is a URL prefix; entries SHOULD end with a trailing slash.",
+      "items": {
+        "type": "string",
+        "format": "uri",
+        "minLength": 1
+      }
+    }
+  },
+  "required": ["version"],
+
+  "$defs": {
+    "EndpointEntry": {
+      "type": "object",
+      "description": "Discovery metadata for one API endpoint. Additional members are permitted for extensibility.",
+      "properties": {
+        "descriptor": {
+          "type": "string",
+          "format": "uri-reference",
+          "description": "URL of the endpoint's view descriptor resource. MAY be a relative reference, resolved against the discovery document URL per RFC 3986.",
+          "minLength": 1
+        }
+      },
+      "required": ["descriptor"]
+    }
+  }
+}

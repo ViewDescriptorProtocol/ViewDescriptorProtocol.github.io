@@ -2,10 +2,12 @@
 
 The VDP JSON Schemas define the structure of view descriptor documents and the discovery document. Both use [JSON Schema draft-07](https://json-schema.org/specification-links#draft-7).
 
-**Current versions:**
+**Current versions**, published at their canonical `$id` URLs:
 
-- `vdp.v0-1.schema.json` — validates standalone view descriptors and multi-view descriptors
-- `vdp-discovery.v0-1.schema.json` — validates the discovery document served at `/.well-known/vdp`
+- [`vdp.v0-1.schema.json`](https://vdprotocol.org/schemas/vdp.v0-1.schema.json) — validates standalone view descriptors and multi-view descriptors
+- [`vdp-discovery.v0-1.schema.json`](https://vdprotocol.org/schemas/vdp-discovery.v0-1.schema.json) — validates the discovery document served at `/.well-known/vdp`
+
+Because the schemas are hosted at their `$id` URLs, they can be referenced directly from other schemas and validators.
 
 ## View Descriptor Schema
 
