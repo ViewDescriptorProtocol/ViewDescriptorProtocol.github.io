@@ -51,13 +51,13 @@ When a template has named insertion points that should be filled dynamically, th
 
 ```json
 {
-  "template": "https://templates.example.com/layouts/sidebar",
+  "template": "https://example.com/templates/layouts/sidebar",
   "slots": {
     "mainContent": {
-      "template": "https://templates.example.com/components/data-display/card"
+      "template": "https://example.com/templates/components/data-display/card"
     },
     "sidebarNav": {
-      "template": "https://templates.example.com/components/navigation/nav"
+      "template": "https://example.com/templates/components/navigation/nav"
     }
   }
 }
@@ -71,29 +71,29 @@ Since each slot value is itself a view descriptor, composition nests to arbitrar
 
 ```json
 {
-  "template": "https://templates.example.com/layouts/sidebar",
+  "template": "https://example.com/templates/layouts/sidebar",
   "slots": {
     "mainContent": {
-      "template": "https://templates.example.com/demos/dashboard",
+      "template": "https://example.com/templates/demos/dashboard",
       "slots": {
         "statsRow": {
-          "template": "https://templates.example.com/components/data-display/card"
+          "template": "https://example.com/templates/components/data-display/card"
         },
         "activityTable": {
-          "template": "https://templates.example.com/components/data-display/table"
+          "template": "https://example.com/templates/components/data-display/table"
         },
         "chart": {
-          "template": "https://templates.example.com/components/charts/chart",
+          "template": "https://example.com/templates/components/charts/chart",
           "slots": {
             "legend": {
-              "template": "https://templates.example.com/components/charts/chart-legend"
+              "template": "https://example.com/templates/components/charts/chart-legend"
             }
           }
         }
       }
     },
     "sidebarNav": {
-      "template": "https://templates.example.com/components/navigation/nav"
+      "template": "https://example.com/templates/components/navigation/nav"
     }
   }
 }
@@ -134,21 +134,21 @@ A single slot can accept multiple templates, rendered in sequence within the ins
 
 ```json
 {
-  "template": "https://templates.example.com/layouts/sidebar",
+  "template": "https://example.com/templates/layouts/sidebar",
   "slots": {
     "mainContent": [
       {
-        "template": "https://templates.example.com/components/data-display/card"
+        "template": "https://example.com/templates/components/data-display/card"
       },
       {
-        "template": "https://templates.example.com/components/charts/chart"
+        "template": "https://example.com/templates/components/charts/chart"
       },
       {
-        "template": "https://templates.example.com/components/data-display/table"
+        "template": "https://example.com/templates/components/data-display/table"
       }
     ],
     "sidebarNav": {
-      "template": "https://templates.example.com/components/navigation/nav"
+      "template": "https://example.com/templates/components/navigation/nav"
     }
   }
 }
@@ -162,7 +162,7 @@ A view descriptor MAY carry two advisory members alongside `template`:
 
 ```json
 {
-  "template": "https://templates.example.com/components/data-display/card",
+  "template": "https://example.com/templates/components/data-display/card",
   "type": "text/x-qute",
   "integrity": "sha384-oqVuAfXRKap7fdgcCY5uykM6+R9GqQ8K/uxy9rx7HNQlGYl1kPzQho1wx4JwY8wC"
 }
@@ -179,13 +179,13 @@ A slot value MAY be a **descriptor reference** — an object whose single member
 
 ```json
 {
-  "template": "https://templates.example.com/layouts/sidebar",
+  "template": "https://example.com/templates/layouts/sidebar",
   "slots": {
     "sidebarNav": {
       "descriptor": "https://example.com/views/standard-nav.json"
     },
     "mainContent": {
-      "template": "https://templates.example.com/demos/dashboard"
+      "template": "https://example.com/templates/demos/dashboard"
     }
   }
 }
@@ -264,10 +264,10 @@ When the data format is flexible (e.g., HAL+JSON, custom APIs), embed the view d
     "self": { "href": "/api/dashboard" }
   },
   "_view": {
-    "template": "https://templates.example.com/demos/dashboard",
+    "template": "https://example.com/templates/demos/dashboard",
     "slots": {
       "statsRow": {
-        "template": "https://templates.example.com/components/data-display/card"
+        "template": "https://example.com/templates/components/data-display/card"
       }
     }
   },
@@ -447,7 +447,7 @@ Not every insertion point in a template needs to appear in the view descriptor. 
 ```http
 HTTP/1.1 200 OK
 Content-Type: application/json
-View-Template: https://templates.example.com/components/forms/form
+View-Template: https://example.com/templates/components/forms/form
 
 {
   "csrfToken": "abc123",
@@ -483,22 +483,22 @@ Link: <https://example.com/views/dashboard.json>; rel="view-descriptor"
 
 ```json
 {
-  "template": "https://templates.example.com/layouts/sidebar",
+  "template": "https://example.com/templates/layouts/sidebar",
   "slots": {
     "sidebarNav": {
-      "template": "https://templates.example.com/components/navigation/nav"
+      "template": "https://example.com/templates/components/navigation/nav"
     },
     "mainContent": {
-      "template": "https://templates.example.com/demos/dashboard",
+      "template": "https://example.com/templates/demos/dashboard",
       "slots": {
         "statsCards": {
-          "template": "https://templates.example.com/components/data-display/card"
+          "template": "https://example.com/templates/components/data-display/card"
         },
         "activityTable": {
-          "template": "https://templates.example.com/components/data-display/table"
+          "template": "https://example.com/templates/components/data-display/table"
         },
         "revenueChart": {
-          "template": "https://templates.example.com/components/charts/chart"
+          "template": "https://example.com/templates/components/charts/chart"
         }
       }
     }
@@ -745,7 +745,7 @@ Content-Type: application/vdp-discovery+json
     }
   },
   "trustedTemplateUrls": [
-    "https://templates.example.com/"
+    "https://example.com/templates/"
   ]
 }
 ```
@@ -762,7 +762,7 @@ Each entry in `endpoints` maps an API path to the URL of its view descriptor res
 
 The `endpoints` member is intentionally aligned in spirit with [RFC 9264](https://www.rfc-editor.org/rfc/rfc9264) (Linkset): each entry expresses a `view-descriptor` link (Section 12.1) whose context is the API path and whose target is the descriptor URL. Linkset itself is not used because it defines no document-level members for metadata such as `version` and `trustedTemplateUrls`. A future version of this specification may additionally offer the same links as `application/linkset+json`.
 
-The `trustedTemplateUrls` field provides the template URL allowlist referenced in Section 10. Each entry is a URL prefix: a template URL is trusted if and only if, after RFC 3986 normalization, it begins with one of the listed entries. Entries SHOULD end with a trailing slash so that `https://templates.example.com/` cannot accidentally match `https://templates.example.com.evil.host/`.
+The `trustedTemplateUrls` field provides the template URL allowlist referenced in Section 10. Each entry is a URL prefix: a template URL is trusted if and only if, after RFC 3986 normalization, it begins with one of the listed entries. Entries SHOULD end with a trailing slash so that `https://example.com/templates/` cannot accidentally match `https://example.com/templates-evil/`, and a host-only entry like `https://example.com/` cannot accidentally match `https://example.com.evil.host/`.
 
 **Extensibility:** Clients MUST ignore members of the discovery document — including members of `endpoints` entries — that they do not recognize. Future versions of this specification may define additional members.
 

@@ -14,6 +14,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Changed
 
+- 2026-07-21 — All example template URLs consolidated onto a single host: `https://example.com/templates/...` replaces the `templates.example.com` subdomain throughout the specification and examples. Template URLs are identifiers first; a dedicated template host in every example suggested a deployment choice (a separate template server) that the protocol does not make.
 - 2026-07-21 — JSON Schemas upgraded from draft-07 to the [JSON Schema 2020-12](https://json-schema.org/specification-links#2020-12) dialect (`$schema` is now `https://json-schema.org/draft/2020-12/schema`). The schemas already used the post-draft-07 `$defs` keyword, so the declared dialect now matches the keywords in use; no other schema changes were needed. CI and local validation pass `--spec=draft2020` to ajv. The archived RVST schemas remain draft-07.
 - 2026-07-20 — Optional template metadata on view descriptors (new Section 3.6): an advisory `type` member (media type hint for the template resource) and an `integrity` member (W3C Subresource Integrity); an integrity mismatch is treated as a template fetch failure.
 - 2026-07-20 — Descriptor references (new Section 3.7): a slot value may be `{"descriptor": <url>}` pointing at a standalone view descriptor resource, enabling shared, independently cacheable subtrees; resolution, cycle, and failure rules added to Sections 8–10, and the schema gained `SlotDescriptor`/`DescriptorReference` definitions.
