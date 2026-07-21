@@ -31,6 +31,8 @@ REST APIs return structured data (JSON, XML) that carries no presentation inform
 - **Static Composition**: Composition written directly into a template's source — for example, a layout that always includes its `_head` partial. VDP does not describe static composition; it is internal to the template.
 - **Dynamic Composition**: Composition that changes per API response — a slot whose template is chosen by the server at request time. These are the slots a view descriptor declares.
 
+The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "SHOULD NOT", "RECOMMENDED", "NOT RECOMMENDED", "MAY", and "OPTIONAL" in this document are to be interpreted as described in [RFC 2119](https://www.rfc-editor.org/rfc/rfc2119) and [RFC 8174](https://www.rfc-editor.org/rfc/rfc8174) when, and only when, they appear in all capitals.
+
 ## 3. View Descriptor Format
 
 ### 3.1 Basic Structure (Single Template)
@@ -154,14 +156,66 @@ A single slot can accept multiple templates, rendered in sequence within the ins
 
 Each element in the array is a full view descriptor and can itself have nested `slots`. The client MUST render array elements in order.
 
-### 3.6 Formal Grammar
+### 3.6 Optional Template Metadata
+
+A view descriptor MAY carry two advisory members alongside `template`:
+
+```json
+{
+  "template": "https://templates.example.com/components/data-display/card",
+  "type": "text/x-qute",
+  "integrity": "sha384-oqVuAfXRKap7fdgcCY5uykM6+R9GqQ8K/uxy9rx7HNQlGYl1kPzQho1wx4JwY8wC"
+}
+```
+
+- **`type`** — a media type ([RFC 6838](https://www.rfc-editor.org/rfc/rfc6838)) hinting at the format of the template resource. It lets a client select or prepare a rendering engine before fetching the template. The hint is advisory: the `Content-Type` of the fetched template response is authoritative.
+- **`integrity`** — integrity metadata for the template resource, in the format defined by [W3C Subresource Integrity](https://www.w3.org/TR/SRI/) (e.g., `sha384-` followed by the base64-encoded digest). A client that supports integrity verification MUST verify the fetched template bytes against this metadata and MUST treat a mismatch as a template fetch failure (Section 9.1). The trusted-URL allowlist (Section 10) authenticates where a template comes from; `integrity` authenticates the content itself, which matters for templates hosted on third-party infrastructure such as CDNs.
+
+Both members describe the template *resource*; they are not parameters passed to the template and do not affect data binding.
+
+### 3.7 Descriptor References
+
+A slot value MAY be a **descriptor reference** — an object whose single member `descriptor` holds the URL of a view descriptor resource (Section 5) — instead of an inline view descriptor:
+
+```json
+{
+  "template": "https://templates.example.com/layouts/sidebar",
+  "slots": {
+    "sidebarNav": {
+      "descriptor": "https://example.com/views/standard-nav.json"
+    },
+    "mainContent": {
+      "template": "https://templates.example.com/demos/dashboard"
+    }
+  }
+}
+```
+
+The client fetches the referenced resource and uses the result as the slot's view descriptor. This lets a common subtree (a standard navigation block, a shared footer composition) be defined once, referenced from many descriptors, and cached independently (Section 5.2).
+
+Rules:
+
+- A descriptor reference contains exactly the `descriptor` member — it MUST NOT also contain `template` or `slots`.
+- Descriptor references are valid only as slot values (including slot array elements, Section 3.5). The root of a view descriptor resource or inline `_view`/`_views` value MUST NOT be a reference.
+- The `descriptor` URL MAY be relative; it resolves against the same base URL as the containing descriptor's template URLs (Section 5.4). The fetched resource is itself a standalone view descriptor resource, so relative URLs *inside* it resolve against its own URL.
+- The referenced resource MUST be a single `ViewDescriptor` — it MAY itself contain further references in its slots, but a `MultiViewDescriptor` is invalid in slot context and is handled per Section 9.3.
+- References count toward the client's recursion depth limit (Section 8). A reference chain that revisits a descriptor URL is a cycle; clients MUST abort resolution of that slot and handle it per Section 9.1.
+- A failure to fetch or parse a referenced descriptor is handled like a template fetch failure for that slot (Section 9.1).
+
+### 3.8 Formal Grammar
 
 ```
-ViewDescriptor      = { "template": TemplateURL, "slots"?: Slots }
+ViewDescriptor      = { "template": TemplateURL, "type"?: MediaType,
+                        "integrity"?: IntegrityMetadata, "slots"?: Slots }
 TemplateURL         = URI (RFC 3986)
+MediaType           = string (a media type, RFC 6838)
+IntegrityMetadata   = string (integrity metadata, W3C Subresource Integrity)
 Slots               = { SlotName: SlotValue, ... }
 SlotName            = string (matches an insertion point in the template)
-SlotValue           = ViewDescriptor | ViewDescriptor[]
+SlotValue           = SlotDescriptor | SlotDescriptor[]
+SlotDescriptor      = ViewDescriptor | DescriptorReference
+DescriptorReference = { "descriptor": DescriptorURL }
+DescriptorURL       = URI (RFC 3986)
 
 MultiViewDescriptor = { "views": { ViewName: ViewDescriptor, ... } }
 ViewName            = string
@@ -259,6 +313,8 @@ OData4 responses have a rigid structure but support custom instance annotations.
 ```
 
 Alternatively, use the `Link` header approach (Section 4.1) to avoid touching the OData body entirely.
+
+OData expects instance annotations to be qualified by the namespace or alias of a defined vocabulary. This specification does not yet publish a formal OData vocabulary (CSDL document) defining the `View.descriptor` term, so the `View` alias is provisional. A future version may publish such a vocabulary at a stable URL. Deployments that require strict OData vocabulary conformance SHOULD use the `Link` header transport instead.
 
 ### 4.4 Precedence
 
@@ -517,15 +573,16 @@ This is the pattern used by **quarkus-pha**: Quarkus acts as the BFF, fetching d
 
 1. **Extract view descriptor** from the response (check `_view`/`_views` body key, then `Link` header, then `View-Template` header).
 2. **Fetch the view descriptor** if it is a URL reference (cache as appropriate).
-3. **Fetch the root template** from the `template` URL.
+3. **Fetch the root template** from the `template` URL, verifying `integrity` when present (Section 3.6).
 4. **Identify slot insertion points** in the template.
 5. **For each slot** declared in the view descriptor:
-    a. Fetch the sub-template from its `template` URL.
-    b. If the slot's view descriptor itself declares `slots`, repeat steps 3–5 for that descriptor.
-    c. Insert the resolved sub-template into the slot.
+    a. If the slot value is a descriptor reference (Section 3.7), fetch the referenced view descriptor resource and substitute the result; on failure or cycle, handle per Section 9.1.
+    b. Fetch the sub-template from its `template` URL, verifying `integrity` when present.
+    c. If the slot's view descriptor itself declares `slots`, repeat steps 3–5 for that descriptor.
+    d. Insert the resolved sub-template into the slot.
 6. **Render** the composed template tree with the API response data.
 
-Clients SHOULD impose a maximum recursion depth (RECOMMENDED: 10 levels) to prevent unbounded nesting.
+Clients SHOULD impose a maximum recursion depth (RECOMMENDED: 10 levels) to prevent unbounded nesting. Descriptor references count toward this depth.
 
 ## 9. Error Handling
 
@@ -540,6 +597,11 @@ When fetching a template URL fails (HTTP 404, 5xx, network error, timeout):
 - Clients MAY display a placeholder or the template's default slot content in place of the failed slot.
 - For slot arrays (Section 3.5), a failed array element is skipped; the remaining elements render in their declared order.
 - Clients SHOULD log or report the failure for diagnostic purposes.
+
+The following are treated as template fetch failures of the affected slot:
+
+- An `integrity` verification mismatch (Section 3.6).
+- A descriptor reference (Section 3.7) that cannot be fetched, or whose reference chain forms a cycle.
 
 ### 9.2 Slot Name Mismatch
 
@@ -573,6 +635,8 @@ Error handling follows the principle that a failure stays as local as possible:
   3. **Same-origin default** — when neither of the above is available, only template URLs sharing an origin ([RFC 6454](https://www.rfc-editor.org/rfc/rfc6454)) with the view descriptor's base URL (Section 5.4) are trusted.
 
   Matching semantics for allowlist entries are defined in Section 13.2.
+- **Descriptor reference validation**: URLs in descriptor references (Section 3.7) SHOULD be validated with the same allowlist chain as template URLs. (Referenced descriptors only *select* templates, and those template URLs are themselves validated — but restricting where descriptors may be fetched from reduces attack surface.)
+- **Template integrity**: Servers SHOULD provide `integrity` metadata (Section 3.6) for templates hosted on infrastructure outside their control, such as third-party CDNs. The allowlist authenticates the origin of a template URL; integrity metadata authenticates the template content itself.
 - **CORS**: Template resources served cross-origin MUST include appropriate CORS headers.
 - **Content Security Policy**: Browser clients fetching templates at runtime SHOULD include template origins in the `connect-src` CSP directive. `script-src` or `style-src` apply only where templates are loaded as executable scripts or stylesheets.
 - **Template sandboxing**: Clients SHOULD render templates in a sandboxed context to prevent template injection attacks.
@@ -653,6 +717,8 @@ VDP-Version: 0.1
 ```
 
 The presence of `VDP-Version` alone is sufficient to signal VDP support; `VDP-Support` is an explicit affirmation retained for readability. Servers SHOULD send both, but clients MUST treat a response carrying only `VDP-Version` as advertising support.
+
+`VDP-Version` is not limited to `OPTIONS` responses: servers MAY include it on any response that carries a view descriptor (by any transport, Section 4) and on view descriptor resources themselves. Wherever it appears, its value MUST match the protocol version conveyed by the `application/vdp+json` media type `version` parameter (Section 12.2) and the discovery document (Section 13.2). If a response carries both the header and the media type parameter and they disagree, clients SHOULD prefer the media type parameter.
 
 ### 13.2 Well-Known URI
 
@@ -786,6 +852,41 @@ Partial rendering logic belongs to the BFF or client, not to VDP. The protocol i
 - Whether to re-render just the changed slot or the entire template tree
 
 VDP's role is unchanged: declare which template renders the returned data.
+
+## 15. Conformance
+
+This section defines what it means to "support VDP". Three conformance classes are defined; an implementation may belong to more than one.
+
+### 15.1 VDP Server
+
+An HTTP server that produces view descriptors. A conforming VDP Server:
+
+- MUST emit view descriptors that are valid per the formal grammar (Section 3.8) — equivalently, that validate against the published JSON Schema.
+- MUST deliver descriptors via at least one of the transports in Section 4, following that transport's rules, including emitting at most one `Link` value with `rel="view-descriptor"` per response (Section 4.4).
+- MUST use HTTPS template URLs, except for loopback addresses during local development (Section 10).
+- SHOULD serve standalone view descriptor resources as `application/vdp+json` with standard caching headers (Sections 5.1–5.2).
+- SHOULD use absolute template URLs when descriptors may be consumed from multiple base URL contexts (Section 5.4).
+- SHOULD advertise VDP support via the discovery mechanisms of Section 13; if it publishes a discovery document, that document MUST be valid per Section 13.2 and SHOULD be served as `application/vdp-discovery+json`.
+
+### 15.2 VDP Client
+
+Software that consumes view descriptors and resolves template trees. A conforming VDP Client:
+
+- MUST extract view descriptors using the precedence order of Section 4.4.
+- MUST implement the resolution algorithm of Section 8, including a recursion depth limit and reference cycle handling.
+- MUST implement the error handling behavior of Section 9 — in particular, preferring partial rendering over total failure.
+- MUST validate template URLs against the allowlist source chain of Section 10 and reject non-HTTPS template URLs outside local development.
+- MUST reject invalid view descriptors (Section 9.3) rather than attempting partial interpretation of them.
+- SHOULD verify template `integrity` metadata when present (Section 3.6).
+- MUST ignore unrecognized members of the discovery document (Section 13.2).
+
+### 15.3 VDP BFF
+
+A backend-for-frontend that resolves descriptors server-side and delivers rendered output (Section 7.5). A conforming VDP BFF:
+
+- MUST meet all VDP Client requirements (Section 15.2) in its role as a consumer of upstream APIs.
+- MAY cache resolved templates and descriptors per their HTTP caching headers (Section 5.2).
+- Is unconstrained by this specification in the interface it exposes to its own clients — the rendered output (HTML or otherwise) is out of VDP's scope.
 
 ---
 
