@@ -67,7 +67,7 @@ Because the schemas are hosted at their `$id` URLs, they can be referenced direc
     "TemplateURL": {
       "type": "string",
       "format": "uri",
-      "description": "A URL identifying a template resource. MUST use HTTPS (loopback addresses excepted for local development)."
+      "description": "A URL identifying a template. The URL is an identifier first — which source supplies the template (app bundle, page, BFF-local store, network fetch) is deployment-specific and outside the protocol. Network retrieval MUST use HTTPS (loopback addresses excepted for local development)."
     },
 
     "Slots": {
@@ -193,7 +193,7 @@ The core type. Identifies a root template and optionally declares slot assignmen
 
 ### TemplateURL
 
-A URI string (`format: "uri"`) identifying a template resource. MUST use HTTPS in production.
+A URI string (`format: "uri"`) identifying a template. The URL is an identifier first — which source supplies the template (app bundle, page-shipped templates, BFF-local store, network fetch) is deployment-specific and outside the protocol (Specification Section 6.3). Network retrieval MUST use HTTPS in production.
 
 ### Slots
 
