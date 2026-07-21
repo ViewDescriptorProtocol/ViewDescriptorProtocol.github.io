@@ -26,16 +26,41 @@ Because the schemas are hosted at their `$id` URLs, they can be referenced direc
   "$defs": {
     "ViewDescriptor": {
       "type": "object",
-      "description": "A view descriptor identifying a root template URL and its dynamic slot assignments. Slots are recursive — each slot value is itself a ViewDescriptor or an array of ViewDescriptors.",
+      "description": "A view descriptor identifying a root template URL and its dynamic slot assignments. Slots are recursive — each slot value is a ViewDescriptor, a DescriptorReference, or an array of either.",
       "properties": {
         "template": {
           "$ref": "#/$defs/TemplateURL"
+        },
+        "type": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Advisory media type (RFC 6838) of the template resource, e.g. text/x-qute. The Content-Type of the fetched template is authoritative."
+        },
+        "integrity": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Integrity metadata for the template resource in W3C Subresource Integrity format, e.g. sha384-<base64 digest>. A mismatch is treated as a template fetch failure."
         },
         "slots": {
           "$ref": "#/$defs/Slots"
         }
       },
       "required": ["template"],
+      "additionalProperties": false
+    },
+
+    "DescriptorReference": {
+      "type": "object",
+      "description": "A reference to a standalone view descriptor resource, valid only as a slot value. The client fetches the URL and uses the result as the slot's descriptor. The URL may be a relative reference, resolved against the same base as the containing descriptor's template URLs.",
+      "properties": {
+        "descriptor": {
+          "type": "string",
+          "format": "uri-reference",
+          "minLength": 1,
+          "description": "URL of the referenced view descriptor resource."
+        }
+      },
+      "required": ["descriptor"],
       "additionalProperties": false
     },
 
@@ -47,20 +72,28 @@ Because the schemas are hosted at their `$id` URLs, they can be referenced direc
 
     "Slots": {
       "type": "object",
-      "description": "A map of slot names to slot values. Each key is a named insertion point in the parent template. Each value is a ViewDescriptor (single template) or an array of ViewDescriptors (multiple templates rendered in sequence).",
+      "description": "A map of slot names to slot values. Each key is a named insertion point in the parent template. Each value is a SlotDescriptor (an inline ViewDescriptor or a DescriptorReference) or an array of SlotDescriptors rendered in sequence.",
       "additionalProperties": {
         "$ref": "#/$defs/SlotValue"
       }
     },
 
-    "SlotValue": {
-      "description": "A single ViewDescriptor or an ordered array of ViewDescriptors. Arrays are rendered in sequence within the slot.",
+    "SlotDescriptor": {
+      "description": "An inline ViewDescriptor or a DescriptorReference pointing at a standalone view descriptor resource.",
       "oneOf": [
         { "$ref": "#/$defs/ViewDescriptor" },
+        { "$ref": "#/$defs/DescriptorReference" }
+      ]
+    },
+
+    "SlotValue": {
+      "description": "A single SlotDescriptor or an ordered array of SlotDescriptors. Arrays are rendered in sequence within the slot.",
+      "oneOf": [
+        { "$ref": "#/$defs/SlotDescriptor" },
         {
           "type": "array",
           "items": {
-            "$ref": "#/$defs/ViewDescriptor"
+            "$ref": "#/$defs/SlotDescriptor"
           },
           "minItems": 1
         }
@@ -149,11 +182,13 @@ The discovery document is not a view descriptor — it is served as `application
 
 ### ViewDescriptor
 
-The core type. Identifies a root template and optionally declares slot assignments.
+The core type. Identifies a root template and optionally declares slot assignments and advisory template metadata.
 
 | Property | Type | Required | Description |
 |----------|------|----------|-------------|
 | `template` | `TemplateURL` | Yes | URL identifying the template resource |
+| `type` | `string` | No | Advisory media type (RFC 6838) of the template resource; the fetched template's `Content-Type` is authoritative |
+| `integrity` | `string` | No | W3C Subresource Integrity metadata for the template resource; a mismatch is treated as a template fetch failure |
 | `slots` | `Slots` | No | Map of slot names to slot values |
 
 ### TemplateURL
@@ -168,8 +203,20 @@ An object where each key is a slot name (matching an insertion point in the pare
 
 One of:
 
-- A single `ViewDescriptor` — one template fills the slot
-- An array of `ViewDescriptor` objects — multiple templates rendered in sequence within the slot (minimum 1 item)
+- A single `SlotDescriptor` — one template (or referenced descriptor) fills the slot
+- An array of `SlotDescriptor` objects — multiple entries rendered in sequence within the slot (minimum 1 item)
+
+### SlotDescriptor
+
+Either an inline `ViewDescriptor` or a `DescriptorReference`.
+
+### DescriptorReference
+
+A reference to a standalone view descriptor resource, valid only as a slot value (never at the root). The client fetches the URL and uses the result as the slot's descriptor.
+
+| Property | Type | Required | Description |
+|----------|------|----------|-------------|
+| `descriptor` | `string` (uri-reference) | Yes | URL of the referenced view descriptor resource; may be relative, resolved against the same base as the containing descriptor's template URLs |
 
 ### MultiViewDescriptor
 
