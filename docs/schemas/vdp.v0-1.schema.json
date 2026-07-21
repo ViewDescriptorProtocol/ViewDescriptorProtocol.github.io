@@ -1,5 +1,5 @@
 {
-  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://vdprotocol.org/schemas/vdp.v0-1.schema.json",
   "title": "View Descriptor Protocol (VDP) v0.1",
   "description": "Schema for VDP view descriptor documents. Validates standalone ViewDescriptor and MultiViewDescriptor payloads. Definitions in $defs can be referenced by other schemas for inline body transport (_view / _views). The discovery document served at /.well-known/vdp has its own schema: vdp-discovery.v0-1.schema.json.",

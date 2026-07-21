@@ -1,6 +1,6 @@
 # Schema Reference
 
-The VDP JSON Schemas define the structure of view descriptor documents and the discovery document. Both use [JSON Schema draft-07](https://json-schema.org/specification-links#draft-7).
+The VDP JSON Schemas define the structure of view descriptor documents and the discovery document. Both use the [JSON Schema 2020-12](https://json-schema.org/specification-links#2020-12) dialect.
 
 **Current versions**, published at their canonical `$id` URLs:
 
@@ -13,7 +13,7 @@ Because the schemas are hosted at their `$id` URLs, they can be referenced direc
 
 ```json
 {
-  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://vdprotocol.org/schemas/vdp.v0-1.schema.json",
   "title": "View Descriptor Protocol (VDP) v0.1",
   "description": "Schema for VDP view descriptor documents. Validates standalone ViewDescriptor and MultiViewDescriptor payloads. Definitions in $defs can be referenced by other schemas for inline body transport (_view / _views). The discovery document served at /.well-known/vdp has its own schema: vdp-discovery.v0-1.schema.json.",
@@ -126,7 +126,7 @@ The discovery document is not a view descriptor — it is served as `application
 
 ```json
 {
-  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://vdprotocol.org/schemas/vdp-discovery.v0-1.schema.json",
   "title": "View Descriptor Protocol (VDP) v0.1 Discovery Document",
   "description": "Schema for the VDP discovery document served at /.well-known/vdp as application/vdp-discovery+json (spec Section 13.2). Unrecognized members are permitted everywhere per the discovery extensibility clause: clients MUST ignore members they do not recognize.",
@@ -256,6 +256,6 @@ To validate the VDP examples locally:
 cd VDP
 podman run --rm -v .:/work:Z -w /work node:lts sh -c \
   "npm install --no-save ajv-cli ajv-formats && \
-   npx ajv-cli test -s vdp.v0-1.schema.json -d 'examples/vdp-*.json' --valid -c ajv-formats && \
-   npx ajv-cli test -s vdp-discovery.v0-1.schema.json -d 'examples/discovery-*.json' --valid -c ajv-formats"
+   npx ajv-cli test --spec=draft2020 -s vdp.v0-1.schema.json -d 'examples/vdp-*.json' --valid -c ajv-formats && \
+   npx ajv-cli test --spec=draft2020 -s vdp-discovery.v0-1.schema.json -d 'examples/discovery-*.json' --valid -c ajv-formats"
 ```
