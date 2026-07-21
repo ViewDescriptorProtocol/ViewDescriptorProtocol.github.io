@@ -53,7 +53,7 @@
     "TemplateURL": {
       "type": "string",
       "format": "uri",
-      "description": "A URL identifying a template resource. MUST use HTTPS (loopback addresses excepted for local development)."
+      "description": "A URL identifying a template. The URL is an identifier first — which source supplies the template (app bundle, page, BFF-local store, network fetch) is deployment-specific and outside the protocol. Network retrieval MUST use HTTPS (loopback addresses excepted for local development)."
     },
 
     "Slots": {

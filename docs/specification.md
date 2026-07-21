@@ -25,7 +25,7 @@ REST APIs return structured data (JSON, XML) that carries no presentation inform
 ## 2. Terminology
 
 - **View Descriptor**: A JSON object that describes a template tree — a root template URL and its slot assignments.
-- **Template URL**: A URL identifying a template resource. The URL MUST resolve to a renderable template in the client's rendering framework.
+- **Template URL**: A URL identifying a template. The URL is an *identifier* first — a stable name and namespace for the template, and the key under which the client caches it — and a fetchable location only secondarily (Section 6.3). Through whatever source the deployment uses, it MUST resolve to a renderable template in the client's rendering framework.
 - **Slot**: A named insertion point in a template where a sub-template can be composed. Slot names correspond to the template's own insertion point identifiers (e.g., Qute's `{#insert slotName}`).
 - **View Descriptor Resource**: A standalone JSON document containing a view descriptor, addressable by its own URL, cacheable independently of the data it describes.
 - **Static Composition**: Composition written directly into a template's source — for example, a layout that always includes its `_head` partial. VDP does not describe static composition; it is internal to the template.
@@ -438,6 +438,21 @@ VDP is agnostic to the template language. However, a template used with VDP MUST
 
 Not every insertion point in a template needs to appear in the view descriptor. Templates commonly include partials that never change — a shared `_head`, a footer — and those stay hardcoded in the template (static composition, Section 2). Only slots whose content varies per API response belong in the view descriptor (dynamic composition).
 
+### 6.3 Template Sources
+
+A template URL names *which* template renders a slot. Deliberately, VDP does not define where the template's source text comes from: the URL is an identifier first — a stable name and namespace for the template, much like a package import path — and the key under which the client caches it. How a client turns that identifier into template source text is a deployment decision, outside the protocol.
+
+A client MAY satisfy a template URL from any source, including:
+
+- templates bundled into the application package (typical for mobile and desktop clients);
+- templates shipped with the page itself (for browsers — e.g., `<template>` elements delivered with the initial HTML);
+- a store local to the BFF, or a dedicated template service;
+- a network fetch of the template URL itself.
+
+All of these are equally conforming. Whatever the source, the client MUST select templates by the absolute URL produced by the Section 5.4 resolution rules — the URL is the template's identity, so a template satisfied from a local source is indistinguishable, to the rest of the resolution algorithm, from a fetch whose cache was already warm (Section 5.2). Fetching the URL over the network is the interoperable default when no local source provides the template, and every network retrieval is subject to Section 10.
+
+The `integrity` member (Section 3.6) authenticates template content obtained from outside the client's trust boundary. A client MAY skip integrity verification for templates satisfied from its own bundle; when integrity metadata is present, it MUST verify any template it fetches over the network (Section 3.6).
+
 ## 7. Examples
 
 ### 7.1 Login Page (Simple, No Slots)
@@ -573,11 +588,11 @@ This is the pattern used by **quarkus-pha**: Quarkus acts as the BFF, fetching d
 
 1. **Extract view descriptor** from the response (check `_view`/`_views` body key, then `Link` header, then `View-Template` header).
 2. **Fetch the view descriptor** if it is a URL reference (cache as appropriate).
-3. **Fetch the root template** from the `template` URL, verifying `integrity` when present (Section 3.6).
+3. **Obtain the root template** identified by the `template` URL, from any Section 6.3 source, verifying `integrity` when present (Section 3.6).
 4. **Identify slot insertion points** in the template.
 5. **For each slot** declared in the view descriptor:
     a. If the slot value is a descriptor reference (Section 3.7), fetch the referenced view descriptor resource and substitute the result; on failure or cycle, handle per Section 9.1.
-    b. Fetch the sub-template from its `template` URL, verifying `integrity` when present.
+    b. Obtain the sub-template identified by its `template` URL, verifying `integrity` when present.
     c. If the slot's view descriptor itself declares `slots`, repeat steps 3–5 for that descriptor.
     d. Insert the resolved sub-template into the slot.
 6. **Render** the composed template tree with the API response data.
@@ -629,6 +644,8 @@ Error handling follows the principle that a failure stays as local as possible:
 
 ## 10. Security Considerations
 
+The requirements in this section govern templates and descriptors **retrieved over a network**. A client that satisfies template URLs from a source inside its own trust boundary (Section 6.3) — an application bundle, templates shipped with the page, a BFF-local store — need not apply them to those templates; any retrieval that does cross the network remains subject to them in full.
+
 - **Template URL validation**: Clients MUST validate template URLs against an allowlist of trusted URL prefixes. Rendering arbitrary templates from untrusted sources is a code injection risk. The allowlist is determined by the first available source below:
   1. **Local configuration** — an allowlist configured in the client or its deployment. When present, it takes precedence over anything the server advertises.
   2. **Discovery document** — the `trustedTemplateUrls` member of the API's discovery document (Section 13.2), when one is available.
@@ -640,7 +657,7 @@ Error handling follows the principle that a failure stays as local as possible:
 - **CORS**: Template resources served cross-origin MUST include appropriate CORS headers.
 - **Content Security Policy**: Browser clients fetching templates at runtime SHOULD include template origins in the `connect-src` CSP directive. `script-src` or `style-src` apply only where templates are loaded as executable scripts or stylesheets.
 - **Template sandboxing**: Clients SHOULD render templates in a sandboxed context to prevent template injection attacks.
-- **HTTPS**: Template URLs MUST use HTTPS. Clients SHOULD reject `http:` template URLs, with an exception permitted for loopback addresses during local development.
+- **HTTPS**: Templates retrieved over a network MUST be retrieved via HTTPS. Clients SHOULD reject fetching `http:` template URLs, with an exception permitted for loopback addresses during local development.
 
 ## 11. Relationship to Existing Standards
 
@@ -875,7 +892,7 @@ Software that consumes view descriptors and resolves template trees. A conformin
 - MUST extract view descriptors using the precedence order of Section 4.4.
 - MUST implement the resolution algorithm of Section 8, including a recursion depth limit and reference cycle handling.
 - MUST implement the error handling behavior of Section 9 — in particular, preferring partial rendering over total failure.
-- MUST validate template URLs against the allowlist source chain of Section 10 and reject non-HTTPS template URLs outside local development.
+- MUST apply the Section 10 requirements — the allowlist source chain, HTTPS — to every template it retrieves over a network; templates satisfied from a source inside its own trust boundary (Section 6.3) are exempt.
 - MUST reject invalid view descriptors (Section 9.3) rather than attempting partial interpretation of them.
 - SHOULD verify template `integrity` metadata when present (Section 3.6).
 - MUST ignore unrecognized members of the discovery document (Section 13.2).
