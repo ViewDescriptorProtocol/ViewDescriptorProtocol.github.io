@@ -270,6 +270,8 @@ When a view descriptor is provided via multiple mechanisms, precedence is:
 
 If both `_view` and `_views` appear in the same response, `_views` takes precedence and `_view` MUST be ignored.
 
+Servers MUST NOT emit more than one `Link` header field value with `rel="view-descriptor"` in a single response. If a client nevertheless receives multiple, it MUST use the first such value (in field order, per [RFC 9110](https://www.rfc-editor.org/rfc/rfc9110) Section 5.3) and ignore the rest.
+
 ## 5. View Descriptor Resources
 
 ### 5.1 Media Type
@@ -355,8 +357,10 @@ Negotiation applies to whichever request returns the view descriptor: the fetch 
 ```http
 GET /views/dashboard.json HTTP/1.1
 Accept: application/vdp+json
-X-VDP-Platform: android
+VDP-Platform: android
 ```
+
+(The header is named `VDP-Platform`, not `X-VDP-Platform` — the `X-` prefix convention is deprecated by [RFC 6648](https://www.rfc-editor.org/rfc/rfc6648).)
 
 This keeps view descriptors small and avoids pushing selection logic into clients.
 
@@ -563,7 +567,12 @@ Error handling follows the principle that a failure stays as local as possible:
 
 ## 10. Security Considerations
 
-- **Template URL validation**: Clients MUST validate template URLs against an allowlist of trusted URL prefixes (see `trustedTemplateUrls`, Section 13.2). Rendering arbitrary templates from untrusted sources is a code injection risk.
+- **Template URL validation**: Clients MUST validate template URLs against an allowlist of trusted URL prefixes. Rendering arbitrary templates from untrusted sources is a code injection risk. The allowlist is determined by the first available source below:
+  1. **Local configuration** — an allowlist configured in the client or its deployment. When present, it takes precedence over anything the server advertises.
+  2. **Discovery document** — the `trustedTemplateUrls` member of the API's discovery document (Section 13.2), when one is available.
+  3. **Same-origin default** — when neither of the above is available, only template URLs sharing an origin ([RFC 6454](https://www.rfc-editor.org/rfc/rfc6454)) with the view descriptor's base URL (Section 5.4) are trusted.
+
+  Matching semantics for allowlist entries are defined in Section 13.2.
 - **CORS**: Template resources served cross-origin MUST include appropriate CORS headers.
 - **Content Security Policy**: Browser clients fetching templates at runtime SHOULD include template origins in the `connect-src` CSP directive. `script-src` or `style-src` apply only where templates are loaded as executable scripts or stylesheets.
 - **Template sandboxing**: Clients SHOULD render templates in a sandboxed context to prevent template injection attacks.
@@ -582,10 +591,11 @@ Error handling follows the principle that a failure stays as local as possible:
 
 ## 12. IANA Considerations
 
-This specification requests registration of:
+This specification requests registration of the entries below. None of these registrations have been submitted to IANA yet; until they are, `view-descriptor` acts as an extension relation type (RFC 8288 Section 2.1.2) and the media types are provisional.
 
 ### 12.1 Link Relation Type
 
+- **Registry:** IANA Link Relation Types ([RFC 8288](https://www.rfc-editor.org/rfc/rfc8288))
 - **Relation Name:** `view-descriptor`
 - **Description:** Refers to a VDP view descriptor resource that describes how to render the linked resource.
 - **Reference:** This specification
@@ -597,6 +607,33 @@ This specification requests registration of:
 - **Required parameters:** None
 - **Optional parameters:** `version` — the VDP protocol version the payload conforms to (e.g., `application/vdp+json; version=0.1`). This is the same value advertised by the `VDP-Version` header and the well-known discovery document (Section 13). It does not version individual view descriptor resources (see Section 5.3).
 - **Reference:** This specification
+
+### 12.3 Media Type: `application/vdp-discovery+json`
+
+- **Type name:** application
+- **Subtype name:** vdp-discovery+json
+- **Required parameters:** None
+- **Optional parameters:** None
+- **Encoding considerations:** Same as `application/json`; uses the `+json` structured syntax suffix ([RFC 6839](https://www.rfc-editor.org/rfc/rfc6839))
+- **Reference:** This specification (Section 13.2)
+
+### 12.4 Well-Known URI
+
+- **Registry:** IANA Well-Known URIs ([RFC 8615](https://www.rfc-editor.org/rfc/rfc8615))
+- **URI suffix:** `vdp`
+- **Reference:** This specification (Section 13.2)
+
+### 12.5 HTTP Field Names
+
+- **Registry:** Hypertext Transfer Protocol (HTTP) Field Name Registry ([RFC 9110](https://www.rfc-editor.org/rfc/rfc9110) Section 16.3.1)
+- **Field names:**
+
+| Field Name      | Status      | Reference                    |
+|-----------------|-------------|------------------------------|
+| `View-Template` | provisional | This specification (§4.1)    |
+| `VDP-Support`   | provisional | This specification (§13.1)   |
+| `VDP-Version`   | provisional | This specification (§13.1)   |
+| `VDP-Platform`  | provisional | This specification (§5.5)    |
 
 ## 13. Discovery
 
@@ -615,15 +652,18 @@ VDP-Support: true
 VDP-Version: 0.1
 ```
 
+The presence of `VDP-Version` alone is sufficient to signal VDP support; `VDP-Support` is an explicit affirmation retained for readability. Servers SHOULD send both, but clients MUST treat a response carrying only `VDP-Version` as advertising support.
+
 ### 13.2 Well-Known URI
 
-APIs MAY expose a discovery document at `/.well-known/vdp`:
+APIs MAY expose a discovery document at `/.well-known/vdp` ([RFC 8615](https://www.rfc-editor.org/rfc/rfc8615)):
 
 ```http
 GET /.well-known/vdp HTTP/1.1
+Accept: application/vdp-discovery+json
 
 HTTP/1.1 200 OK
-Content-Type: application/json
+Content-Type: application/vdp-discovery+json
 
 {
   "version": "0.1",
@@ -633,6 +673,9 @@ Content-Type: application/json
     },
     "/api/products": {
       "descriptor": "https://example.com/views/product-list.json"
+    },
+    "/api/products/{id}": {
+      "descriptor": "/views/product-detail.json"
     }
   },
   "trustedTemplateUrls": [
@@ -641,11 +684,21 @@ Content-Type: application/json
 }
 ```
 
-The discovery document is not a view descriptor and MUST NOT be served as `application/vdp+json`; it is served as plain `application/json`.
+The discovery document is not a view descriptor and MUST NOT be served as `application/vdp+json`. It is served as `application/vdp-discovery+json` (Section 12.3); clients SHOULD also accept `application/json` from servers that cannot configure custom media types.
 
 Each entry in `endpoints` maps an API path to the URL of its view descriptor resource (`descriptor`). This allows clients to prefetch view descriptors and preload templates before making data requests.
 
+**Endpoint keys** are absolute paths (beginning with `/`), interpreted relative to the origin serving the discovery document. A key MAY be a Level 1 URI Template ([RFC 6570](https://www.rfc-editor.org/rfc/rfc6570)), e.g. `/api/products/{id}`. When matching a request path against templated keys, each expression matches exactly one path segment — one or more characters, none of which is `/`. If a path matches multiple entries, a literal (non-templated) entry takes precedence over a templated one; the result of a path matching multiple templated entries is undefined, and servers SHOULD NOT publish overlapping templated keys.
+
+**Descriptor URLs** (`descriptor` values) MAY be relative references, resolved against the URL of the discovery document itself per [RFC 3986](https://www.rfc-editor.org/rfc/rfc3986) Section 5 (so `/views/product-detail.json` above resolves against `https://example.com/.well-known/vdp` to `https://example.com/views/product-detail.json`).
+
+**Caching:** the discovery document is an ordinary cacheable resource. Servers SHOULD provide standard HTTP caching headers (`Cache-Control`, `ETag`) on it, as they do for view descriptor resources (Section 5.2).
+
+The `endpoints` member is intentionally aligned in spirit with [RFC 9264](https://www.rfc-editor.org/rfc/rfc9264) (Linkset): each entry expresses a `view-descriptor` link (Section 12.1) whose context is the API path and whose target is the descriptor URL. Linkset itself is not used because it defines no document-level members for metadata such as `version` and `trustedTemplateUrls`. A future version of this specification may additionally offer the same links as `application/linkset+json`.
+
 The `trustedTemplateUrls` field provides the template URL allowlist referenced in Section 10. Each entry is a URL prefix: a template URL is trusted if and only if, after RFC 3986 normalization, it begins with one of the listed entries. Entries SHOULD end with a trailing slash so that `https://templates.example.com/` cannot accidentally match `https://templates.example.com.evil.host/`.
+
+**Extensibility:** Clients MUST ignore members of the discovery document — including members of `endpoints` entries — that they do not recognize. Future versions of this specification may define additional members.
 
 ### 13.3 OpenAPI Extension
 

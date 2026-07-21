@@ -1,17 +1,20 @@
 # Schema Reference
 
-The VDP JSON Schema defines the structure of view descriptor documents. It uses [JSON Schema draft-07](https://json-schema.org/specification-links#draft-7) and validates both standalone view descriptors and multi-view descriptors.
+The VDP JSON Schemas define the structure of view descriptor documents and the discovery document. Both use [JSON Schema draft-07](https://json-schema.org/specification-links#draft-7).
 
-**Current version:** `vdp.v0-1.schema.json`
+**Current versions:**
 
-## Full Schema
+- `vdp.v0-1.schema.json` — validates standalone view descriptors and multi-view descriptors
+- `vdp-discovery.v0-1.schema.json` — validates the discovery document served at `/.well-known/vdp`
+
+## View Descriptor Schema
 
 ```json
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "https://vdprotocol.org/schemas/vdp.v0-1.schema.json",
   "title": "View Descriptor Protocol (VDP) v0.1",
-  "description": "Schema for VDP view descriptor documents. Validates standalone ViewDescriptor and MultiViewDescriptor payloads. Definitions in $defs can be referenced by other schemas for inline body transport (_view / _views).",
+  "description": "Schema for VDP view descriptor documents. Validates standalone ViewDescriptor and MultiViewDescriptor payloads. Definitions in $defs can be referenced by other schemas for inline body transport (_view / _views). The discovery document served at /.well-known/vdp has its own schema: vdp-discovery.v0-1.schema.json.",
 
   "oneOf": [
     { "$ref": "#/$defs/ViewDescriptor" },
@@ -37,7 +40,7 @@ The VDP JSON Schema defines the structure of view descriptor documents. It uses 
     "TemplateURL": {
       "type": "string",
       "format": "uri",
-      "description": "A URL identifying a template resource. MUST use HTTPS in production environments."
+      "description": "A URL identifying a template resource. MUST use HTTPS (loopback addresses excepted for local development)."
     },
 
     "Slots": {
@@ -77,42 +80,64 @@ The VDP JSON Schema defines the structure of view descriptor documents. It uses 
       },
       "required": ["views"],
       "additionalProperties": false
-    },
+    }
+  }
+}
+```
 
-    "DiscoveryDocument": {
+## Discovery Document Schema
+
+The discovery document is not a view descriptor — it is served as `application/vdp-discovery+json` (never `application/vdp+json`) and has its own schema:
+
+```json
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://vdprotocol.org/schemas/vdp-discovery.v0-1.schema.json",
+  "title": "View Descriptor Protocol (VDP) v0.1 Discovery Document",
+  "description": "Schema for the VDP discovery document served at /.well-known/vdp as application/vdp-discovery+json (spec Section 13.2). Unrecognized members are permitted everywhere per the discovery extensibility clause: clients MUST ignore members they do not recognize.",
+
+  "type": "object",
+  "properties": {
+    "version": {
+      "type": "string",
+      "description": "The VDP protocol version supported by the API (e.g. \"0.1\"). Matches the value advertised by the VDP-Version header.",
+      "minLength": 1
+    },
+    "endpoints": {
       "type": "object",
-      "description": "VDP discovery document served at /.well-known/vdp. Allows clients to prefetch view descriptors and identify trusted template domains.",
+      "description": "Maps API paths to their view descriptor resources. Keys are absolute paths relative to the origin serving the discovery document, and MAY be RFC 6570 Level 1 URI Templates (e.g. /api/products/{id}).",
+      "propertyNames": {
+        "pattern": "^/"
+      },
+      "additionalProperties": {
+        "$ref": "#/$defs/EndpointEntry"
+      }
+    },
+    "trustedTemplateUrls": {
+      "type": "array",
+      "description": "Template URL allowlist (spec Section 10). Each entry is a URL prefix; entries SHOULD end with a trailing slash.",
+      "items": {
+        "type": "string",
+        "format": "uri",
+        "minLength": 1
+      }
+    }
+  },
+  "required": ["version"],
+
+  "$defs": {
+    "EndpointEntry": {
+      "type": "object",
+      "description": "Discovery metadata for one API endpoint. Additional members are permitted for extensibility.",
       "properties": {
-        "version": {
+        "descriptor": {
           "type": "string",
-          "description": "VDP specification version supported by this API."
-        },
-        "endpoints": {
-          "type": "object",
-          "description": "A map of API endpoint paths to the URL of each endpoint's view descriptor resource.",
-          "additionalProperties": {
-            "type": "object",
-            "properties": {
-              "descriptor": {
-                "type": "string",
-                "format": "uri",
-                "description": "URL of the view descriptor resource for this endpoint."
-              }
-            },
-            "required": ["descriptor"],
-            "additionalProperties": false
-          }
-        },
-        "trustedTemplateDomains": {
-          "type": "array",
-          "description": "Allowlist of base URLs from which templates may be loaded.",
-          "items": {
-            "type": "string",
-            "format": "uri"
-          }
+          "format": "uri-reference",
+          "description": "URL of the endpoint's view descriptor resource. MAY be a relative reference, resolved against the discovery document URL per RFC 3986.",
+          "minLength": 1
         }
       },
-      "required": ["version"]
+      "required": ["descriptor"]
     }
   }
 }
@@ -154,19 +179,19 @@ Wraps multiple named views for a single API response.
 
 Clients SHOULD use the `default` view when no specific view is requested.
 
-### DiscoveryDocument
+### Discovery Document
 
-Served at `/.well-known/vdp` for API discovery.
+Served at `/.well-known/vdp` as `application/vdp-discovery+json` (Specification Sections 12.3 and 13.2). Unrecognized members anywhere in the document MUST be ignored by clients.
 
 | Property | Type | Required | Description |
 |----------|------|----------|-------------|
-| `version` | `string` | Yes | VDP specification version |
-| `endpoints` | `object` | No | Map of API paths to `{ "descriptor": <url> }` entries pointing at each endpoint's view descriptor resource |
-| `trustedTemplateDomains` | `string[]` | No | Allowlist of base URLs for template loading |
+| `version` | `string` | Yes | VDP protocol version supported by the API |
+| `endpoints` | `object` | No | Map of API paths to `{ "descriptor": <url> }` entries. Keys are absolute paths relative to the origin serving the discovery document and MAY be RFC 6570 Level 1 URI Templates (e.g. `/api/products/{id}`). `descriptor` values MAY be relative references, resolved against the discovery document URL |
+| `trustedTemplateUrls` | `string[]` | No | Template URL allowlist — trusted URL prefixes; entries SHOULD end with a trailing slash |
 
 ## Validation
 
-The schema validates standalone VDP documents (view descriptor JSON files). For inline transport (`_view` / `_views` embedded in API responses), reference the `$defs` types from your own API schema:
+The view descriptor schema validates standalone VDP documents (view descriptor JSON files). For inline transport (`_view` / `_views` embedded in API responses), reference the `$defs` types from your own API schema:
 
 ```json
 {
@@ -176,11 +201,12 @@ The schema validates standalone VDP documents (view descriptor JSON files). For 
 }
 ```
 
-To validate VDP examples locally:
+To validate the VDP examples locally:
 
 ```bash
 cd VDP
 podman run --rm -v .:/work:Z -w /work node:lts sh -c \
   "npm install --no-save ajv-cli ajv-formats && \
-   npx ajv-cli test -s vdp.v0-1.schema.json -d 'examples/vdp-*.json' --valid -c ajv-formats"
+   npx ajv-cli test -s vdp.v0-1.schema.json -d 'examples/vdp-*.json' --valid -c ajv-formats && \
+   npx ajv-cli test -s vdp-discovery.v0-1.schema.json -d 'examples/discovery-*.json' --valid -c ajv-formats"
 ```
