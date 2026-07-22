@@ -1,0 +1,19 @@
+# Scenario: a BFF resolves and renders server-side (spec §7.5, §6.3).
+direction: down
+style.fill: transparent
+
+browser: Browser
+bff: BFF {
+  client: VDP client
+  store: Local template store\n(or cached fetches) {
+    style.stroke-dash: 4
+  }
+  client -> store: {
+    style.stroke-dash: 4
+  }
+}
+api: API
+
+browser -> bff.client: GET /dashboard
+bff.client -> api: data +\nview descriptor
+bff.client -> browser: rendered HTML —\nno VDP in the browser

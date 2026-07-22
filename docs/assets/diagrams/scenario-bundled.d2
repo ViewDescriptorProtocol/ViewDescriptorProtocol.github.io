@@ -1,0 +1,16 @@
+# Scenario: templates ship inside the app package (spec §6.3).
+direction: down
+style.fill: transparent
+
+api: API
+app: Mobile / desktop app {
+  client: VDP client
+  bundle: Templates shipped\nin the app package {
+    style.stroke-dash: 4
+  }
+  client -> bundle: looks up by URL —\nno fetch {
+    style.stroke-dash: 4
+  }
+}
+
+api -> app.client: data +\nview descriptor
