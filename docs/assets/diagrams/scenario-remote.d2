@@ -1,0 +1,14 @@
+# Scenario: templates fetched over the network (spec §5.2, §10).
+direction: down
+style.fill: transparent
+
+api: API
+client: Any client
+cdn: Template server / CDN {
+  shape: cylinder
+}
+
+api -> client: data +\nview descriptor
+client -> cdn: fetches by URL over HTTPS —\ncached, allowlisted,\nintegrity-checked {
+  style.stroke-dash: 4
+}

@@ -47,6 +47,7 @@ nav:
   - Specification: specification.md
   - Schema: schema.md
   - Examples: examples.md
+  - Deployment Scenarios: deployment-scenarios.md
   - Changelog: changelog.md
   - Related Projects: related-projects.md
 

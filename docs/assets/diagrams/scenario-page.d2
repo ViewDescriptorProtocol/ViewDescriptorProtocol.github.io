@@ -1,0 +1,16 @@
+# Scenario: templates ship with the page itself (spec §6.3).
+direction: down
+style.fill: transparent
+
+api: API
+page: Browser page {
+  script: VDP client script
+  reg: <template> elements\ndelivered with the HTML {
+    style.stroke-dash: 4
+  }
+  script -> reg: matches URLs\nagainst the registry {
+    style.stroke-dash: 4
+  }
+}
+
+api -> page.script: data +\nview descriptor
