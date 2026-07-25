@@ -1,0 +1,92 @@
+# Classical vs VDP: where the data-to-template mapping lives.
+# Left  (Classical): every client/BFF holds its own copy of the mapping.
+# Right (VDP):        one mapping, declared by the API as a view descriptor.
+# 2x3 grid: row 1 is [panel | VS divider | panel], row 2 is the caption under
+# each panel (kept OUT of the boxes so they don't widen them).
+grid-rows: 2
+grid-columns: 3
+horizontal-gap: 90
+vertical-gap: 16
+style.fill: transparent
+
+classical: Classical {
+  direction: down
+  style.stroke-dash: 3
+
+  api: API {
+    label: API\n(raw data only)
+  }
+  mobile: Mobile / desktop client {
+    map: view mapping
+    map.style.fill: "#f8c9c0"
+    map.style.stroke: "#b23a2e"
+    map.style.font-color: "#5a1a12"
+  }
+  bff: BFF {
+    map: view mapping
+    map.style.fill: "#f8c9c0"
+    map.style.stroke: "#b23a2e"
+    map.style.font-color: "#5a1a12"
+  }
+  browser: Browser
+
+  api -> mobile: data
+  api -> bff: data
+  bff -> browser: rendered HTML
+}
+
+# Vertical dashed divider: one real dashed line, VS as its mid-label
+# (d2 masks a gap in the line around the label).
+divider: "" {
+  direction: down
+  style.fill: transparent
+  style.stroke: transparent
+
+  cap_top: "" {width: 1; height: 80; style.opacity: 0}
+  w_top: "" {width: 1; height: 1; style.opacity: 0}
+  vs: VS {
+    shape: text
+    style.font-size: 40
+    style.bold: true
+    style.font-color: "#64748b"
+  }
+  w_bot: "" {width: 1; height: 1; style.opacity: 0}
+  cap_bot: "" {width: 1; height: 80; style.opacity: 0}
+
+  cap_top -- w_top: {style.stroke-dash: 4; style.stroke: "#64748b"}
+  w_top -- vs: {style.stroke-dash: 4; style.stroke: "#64748b"}
+  vs -- w_bot: {style.stroke-dash: 4; style.stroke: "#64748b"}
+  w_bot -- cap_bot: {style.stroke-dash: 4; style.stroke: "#64748b"}
+}
+
+vdp: With VDP {
+  direction: down
+  style.stroke-dash: 3
+
+  api: API {
+    map: view mapping\n(view descriptor)
+    map.style.fill: "#bfe3ff"
+    map.style.stroke: "#1565c0"
+    map.style.font-color: "#0a2c52"
+  }
+  mobile: Mobile / desktop client
+  bff: BFF
+  browser: Browser
+
+  api -> mobile: data +\nview descriptor
+  api -> bff: data +\nview descriptor
+  bff -> browser: rendered HTML
+}
+
+# Row 2: captions under each flow.
+cap_classical: same mapping duplicated in every client {
+  shape: text
+  style.font-size: 15
+  style.italic: true
+}
+spacer: "" {width: 1; height: 1; style.opacity: 0}
+cap_vdp: one mapping, declared once on the server {
+  shape: text
+  style.font-size: 15
+  style.italic: true
+}

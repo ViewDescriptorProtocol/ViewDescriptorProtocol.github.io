@@ -26,10 +26,10 @@ Because the schemas are hosted at their `$id` URLs, they can be referenced direc
   "$defs": {
     "ViewDescriptor": {
       "type": "object",
-      "description": "A view descriptor identifying a root template URL and its dynamic slot assignments. Slots are recursive — each slot value is a ViewDescriptor, a DescriptorReference, or an array of either.",
+      "description": "A view descriptor identifying a root template URI and its dynamic slot assignments. Slots are recursive — each slot value is a ViewDescriptor, a DescriptorReference, or an array of either.",
       "properties": {
         "template": {
-          "$ref": "#/$defs/TemplateURL"
+          "$ref": "#/$defs/TemplateURI"
         },
         "type": {
           "type": "string",
@@ -51,7 +51,7 @@ Because the schemas are hosted at their `$id` URLs, they can be referenced direc
 
     "DescriptorReference": {
       "type": "object",
-      "description": "A reference to a standalone view descriptor resource, valid only as a slot value. The client fetches the URL and uses the result as the slot's descriptor. The URL may be a relative reference, resolved against the same base as the containing descriptor's template URLs.",
+      "description": "A reference to a standalone view descriptor resource, valid only as a slot value. The client fetches the URL and uses the result as the slot's descriptor. The URL may be a relative reference, resolved against the same base as the containing descriptor's template URIs.",
       "properties": {
         "descriptor": {
           "type": "string",
@@ -64,10 +64,11 @@ Because the schemas are hosted at their `$id` URLs, they can be referenced direc
       "additionalProperties": false
     },
 
-    "TemplateURL": {
+    "TemplateURI": {
       "type": "string",
-      "format": "uri",
-      "description": "A URL identifying a template. The URL is an identifier first — which source supplies the template (app bundle, page, BFF-local store, network fetch) is deployment-specific and outside the protocol. Network retrieval MUST use HTTPS (loopback addresses excepted for local development)."
+      "format": "uri-reference",
+      "minLength": 1,
+      "description": "A URI identifying a template. The URI is an identifier first — which source supplies the template (app bundle, page, BFF-local store, network fetch) is deployment-specific and outside the protocol. The scheme is optional: a scheme-less identifier that does not begin with '/' (e.g. example.com/templates/card) is an opaque, host-qualified identity and is NOT resolved as an RFC 3986 relative reference (spec Section 5.4); the resolving code supplies a scheme only when it fetches over the network. Whenever a template is retrieved over the network, retrieval MUST use HTTPS (loopback addresses excepted for local development)."
     },
 
     "Slots": {
@@ -150,10 +151,10 @@ The discovery document is not a view descriptor — it is served as `application
     },
     "trustedTemplateUrls": {
       "type": "array",
-      "description": "Template URL allowlist (spec Section 10). Each entry is a URL prefix; entries SHOULD end with a trailing slash.",
+      "description": "Template URI allowlist (spec Section 10). Each entry is a URL prefix; entries SHOULD end with a trailing slash.",
       "items": {
         "type": "string",
-        "format": "uri",
+        "format": "uri-reference",
         "minLength": 1
       }
     }
@@ -186,14 +187,14 @@ The core type. Identifies a root template and optionally declares slot assignmen
 
 | Property | Type | Required | Description |
 |----------|------|----------|-------------|
-| `template` | `TemplateURL` | Yes | URL identifying the template resource |
+| `template` | `TemplateURI` | Yes | URI identifying the template resource |
 | `type` | `string` | No | Advisory media type (RFC 6838) of the template resource; the fetched template's `Content-Type` is authoritative |
 | `integrity` | `string` | No | W3C Subresource Integrity metadata for the template resource; a mismatch is treated as a template fetch failure |
 | `slots` | `Slots` | No | Map of slot names to slot values |
 
-### TemplateURL
+### TemplateURI
 
-A URI string (`format: "uri"`) identifying a template. The URL is an identifier first — which source supplies the template (app bundle, page-shipped templates, BFF-local store, network fetch) is deployment-specific and outside the protocol (Specification Section 6.3). Network retrieval MUST use HTTPS in production.
+A URI-reference string (`format: "uri-reference"`) identifying a template. The URI is an identifier first — which source supplies the template (app bundle, page-shipped templates, BFF-local store, network fetch) is deployment-specific and outside the protocol (Specification Section 6.3). The scheme is optional: a scheme-less identifier that does not begin with `/` (e.g. `example.com/templates/card`) is an opaque, host-qualified identity and is NOT resolved as an RFC 3986 relative reference (Specification Section 5.4); the resolving code supplies a scheme only when it fetches over the network. Whenever a template is retrieved over the network, retrieval MUST use HTTPS in production.
 
 ### Slots
 
@@ -216,7 +217,7 @@ A reference to a standalone view descriptor resource, valid only as a slot value
 
 | Property | Type | Required | Description |
 |----------|------|----------|-------------|
-| `descriptor` | `string` (uri-reference) | Yes | URL of the referenced view descriptor resource; may be relative, resolved against the same base as the containing descriptor's template URLs |
+| `descriptor` | `string` (uri-reference) | Yes | URL of the referenced view descriptor resource; may be relative, resolved against the same base as the containing descriptor's template URIs |
 
 ### MultiViewDescriptor
 
@@ -236,7 +237,7 @@ Served at `/.well-known/vdp` as `application/vdp-discovery+json` (Specification 
 |----------|------|----------|-------------|
 | `version` | `string` | Yes | VDP protocol version supported by the API |
 | `endpoints` | `object` | No | Map of API paths to `{ "descriptor": <url> }` entries. Keys are absolute paths relative to the origin serving the discovery document and MAY be RFC 6570 Level 1 URI Templates (e.g. `/api/products/{id}`). `descriptor` values MAY be relative references, resolved against the discovery document URL |
-| `trustedTemplateUrls` | `string[]` | No | Template URL allowlist — trusted URL prefixes; entries SHOULD end with a trailing slash |
+| `trustedTemplateUrls` | `string[]` | No | Template URI allowlist — trusted URL prefixes; entries SHOULD end with a trailing slash |
 
 ## Validation
 

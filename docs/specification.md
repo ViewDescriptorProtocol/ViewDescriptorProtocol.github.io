@@ -5,7 +5,7 @@
 
 ## Abstract
 
-The View Descriptor Protocol (VDP) defines a standard mechanism for associating API data responses with the templates that should render them. A **view descriptor** is a JSON structure that names a root template by URL and declares which sub-templates fill its named slots. Because each slot is itself described by a view descriptor, descriptors form a recursive template tree. View descriptors can be transported via HTTP headers (for constrained formats like OData4) or inline in the response body (for flexible formats like HAL+JSON). The protocol is framework-agnostic — templates can be HTML/Qute, SwiftUI views, Compose layouts, or any other rendering format.
+The View Descriptor Protocol (VDP) defines a standard mechanism for associating API data responses with the templates that should render them. A **view descriptor** is a JSON structure that names a root template by URI and declares which sub-templates fill its named slots. Because each slot is itself described by a view descriptor, descriptors form a recursive template tree. View descriptors can be transported via HTTP headers (for constrained formats like OData4) or inline in the response body (for flexible formats like HAL+JSON). The protocol is framework-agnostic — templates can be HTML/Qute, SwiftUI views, Compose layouts, or any other rendering format.
 
 ## 1. Problem Statement
 
@@ -24,8 +24,8 @@ REST APIs return structured data (JSON, XML) that carries no presentation inform
 
 ## 2. Terminology
 
-- **View Descriptor**: A JSON object that describes a template tree — a root template URL and its slot assignments.
-- **Template URL**: A URL identifying a template. The URL is an *identifier* first — a stable name and namespace for the template, and the key under which the client caches it — and a fetchable location only secondarily (Section 6.3). Through whatever source the deployment uses, it MUST resolve to a renderable template in the client's rendering framework.
+- **View Descriptor**: A JSON object that describes a template tree — a root template URI and its slot assignments.
+- **Template URI**: A URI (Uniform Resource *Identifier*) that names a template. It is an **identity first** — a stable name and namespace for the template, and the key under which the client caches it — and a fetchable *location* only secondarily (Section 6.3). Through whatever source the deployment uses, it MUST resolve to a renderable template in the client's rendering framework.
 - **Slot**: A named insertion point in a template where a sub-template can be composed. Slot names correspond to the template's own insertion point identifiers (e.g., Qute's `{#insert slotName}`).
 - **View Descriptor Resource**: A standalone JSON document containing a view descriptor, addressable by its own URL, cacheable independently of the data it describes.
 - **Static Composition**: Composition written directly into a template's source — for example, a layout that always includes its `_head` partial. VDP does not describe static composition; it is internal to the template.
@@ -41,7 +41,7 @@ The simplest view descriptor points to a single template with no slots:
 
 ```json
 {
-  "template": "https://example.com/templates/article"
+  "template": "example.com/templates/article"
 }
 ```
 
@@ -51,13 +51,13 @@ When a template has named insertion points that should be filled dynamically, th
 
 ```json
 {
-  "template": "https://example.com/templates/layouts/sidebar",
+  "template": "example.com/templates/layouts/sidebar",
   "slots": {
     "mainContent": {
-      "template": "https://example.com/templates/components/data-display/card"
+      "template": "example.com/templates/components/data-display/card"
     },
     "sidebarNav": {
-      "template": "https://example.com/templates/components/navigation/nav"
+      "template": "example.com/templates/components/navigation/nav"
     }
   }
 }
@@ -71,29 +71,29 @@ Since each slot value is itself a view descriptor, composition nests to arbitrar
 
 ```json
 {
-  "template": "https://example.com/templates/layouts/sidebar",
+  "template": "example.com/templates/layouts/sidebar",
   "slots": {
     "mainContent": {
-      "template": "https://example.com/templates/demos/dashboard",
+      "template": "example.com/templates/demos/dashboard",
       "slots": {
         "statsRow": {
-          "template": "https://example.com/templates/components/data-display/card"
+          "template": "example.com/templates/components/data-display/card"
         },
         "activityTable": {
-          "template": "https://example.com/templates/components/data-display/table"
+          "template": "example.com/templates/components/data-display/table"
         },
         "chart": {
-          "template": "https://example.com/templates/components/charts/chart",
+          "template": "example.com/templates/components/charts/chart",
           "slots": {
             "legend": {
-              "template": "https://example.com/templates/components/charts/chart-legend"
+              "template": "example.com/templates/components/charts/chart-legend"
             }
           }
         }
       }
     },
     "sidebarNav": {
-      "template": "https://example.com/templates/components/navigation/nav"
+      "template": "example.com/templates/components/navigation/nav"
     }
   }
 }
@@ -107,16 +107,16 @@ A single API response may offer multiple views (e.g., a summary view and a detai
 {
   "views": {
     "default": {
-      "template": "https://example.com/templates/product-detail"
+      "template": "example.com/templates/product-detail"
     },
     "compact": {
-      "template": "https://example.com/templates/product-card"
+      "template": "example.com/templates/product-card"
     },
     "mobile": {
-      "template": "https://example.com/templates/product-mobile",
+      "template": "example.com/templates/product-mobile",
       "slots": {
         "gallery": {
-          "template": "https://example.com/templates/components/swipe-gallery"
+          "template": "example.com/templates/components/swipe-gallery"
         }
       }
     }
@@ -134,21 +134,21 @@ A single slot can accept multiple templates, rendered in sequence within the ins
 
 ```json
 {
-  "template": "https://example.com/templates/layouts/sidebar",
+  "template": "example.com/templates/layouts/sidebar",
   "slots": {
     "mainContent": [
       {
-        "template": "https://example.com/templates/components/data-display/card"
+        "template": "example.com/templates/components/data-display/card"
       },
       {
-        "template": "https://example.com/templates/components/charts/chart"
+        "template": "example.com/templates/components/charts/chart"
       },
       {
-        "template": "https://example.com/templates/components/data-display/table"
+        "template": "example.com/templates/components/data-display/table"
       }
     ],
     "sidebarNav": {
-      "template": "https://example.com/templates/components/navigation/nav"
+      "template": "example.com/templates/components/navigation/nav"
     }
   }
 }
@@ -162,7 +162,7 @@ A view descriptor MAY carry two advisory members alongside `template`:
 
 ```json
 {
-  "template": "https://example.com/templates/components/data-display/card",
+  "template": "example.com/templates/components/data-display/card",
   "type": "text/x-qute",
   "integrity": "sha384-oqVuAfXRKap7fdgcCY5uykM6+R9GqQ8K/uxy9rx7HNQlGYl1kPzQho1wx4JwY8wC"
 }
@@ -179,13 +179,13 @@ A slot value MAY be a **descriptor reference** — an object whose single member
 
 ```json
 {
-  "template": "https://example.com/templates/layouts/sidebar",
+  "template": "example.com/templates/layouts/sidebar",
   "slots": {
     "sidebarNav": {
       "descriptor": "https://example.com/views/standard-nav.json"
     },
     "mainContent": {
-      "template": "https://example.com/templates/demos/dashboard"
+      "template": "example.com/templates/demos/dashboard"
     }
   }
 }
@@ -197,7 +197,7 @@ Rules:
 
 - A descriptor reference contains exactly the `descriptor` member — it MUST NOT also contain `template` or `slots`.
 - Descriptor references are valid only as slot values (including slot array elements, Section 3.5). The root of a view descriptor resource or inline `_view`/`_views` value MUST NOT be a reference.
-- The `descriptor` URL MAY be relative; it resolves against the same base URL as the containing descriptor's template URLs (Section 5.4). The fetched resource is itself a standalone view descriptor resource, so relative URLs *inside* it resolve against its own URL.
+- The `descriptor` URL MAY be relative; it resolves against the same base URL as the containing descriptor's template URIs (Section 5.4). The fetched resource is itself a standalone view descriptor resource, so relative URLs *inside* it resolve against its own URL.
 - The referenced resource MUST be a single `ViewDescriptor` — it MAY itself contain further references in its slots, but a `MultiViewDescriptor` is invalid in slot context and is handled per Section 9.3.
 - References count toward the client's recursion depth limit (Section 8). A reference chain that revisits a descriptor URL is a cycle; clients MUST abort resolution of that slot and handle it per Section 9.1.
 - A failure to fetch or parse a referenced descriptor is handled like a template fetch failure for that slot (Section 9.1).
@@ -205,9 +205,9 @@ Rules:
 ### 3.8 Formal Grammar
 
 ```
-ViewDescriptor      = { "template": TemplateURL, "type"?: MediaType,
+ViewDescriptor      = { "template": TemplateURI, "type"?: MediaType,
                         "integrity"?: IntegrityMetadata, "slots"?: Slots }
-TemplateURL         = URI (RFC 3986)
+TemplateURI         = URI-reference (RFC 3986)
 MediaType           = string (a media type, RFC 6838)
 IntegrityMetadata   = string (integrity metadata, W3C Subresource Integrity)
 Slots               = { SlotName: SlotValue, ... }
@@ -249,7 +249,7 @@ The client fetches `https://example.com/views/dashboard.json` to get the view de
 **For simple cases** (single template, no composition), a shorthand header is also defined:
 
 ```http
-View-Template: https://example.com/templates/article
+View-Template: example.com/templates/article
 ```
 
 When `View-Template` is present, it is equivalent to `{"template": "<URL>"}`. If both `Link` (with `rel="view-descriptor"`) and `View-Template` are present, the `Link` header takes precedence.
@@ -264,10 +264,10 @@ When the data format is flexible (e.g., HAL+JSON, custom APIs), embed the view d
     "self": { "href": "/api/dashboard" }
   },
   "_view": {
-    "template": "https://example.com/templates/demos/dashboard",
+    "template": "example.com/templates/demos/dashboard",
     "slots": {
       "statsRow": {
-        "template": "https://example.com/templates/components/data-display/card"
+        "template": "example.com/templates/components/data-display/card"
       }
     }
   },
@@ -285,11 +285,11 @@ For **multiple views**, use `_views`:
 {
   "_views": {
     "default": {
-      "template": "https://example.com/templates/dashboard-full",
+      "template": "example.com/templates/dashboard-full",
       "slots": { "..." : "..." }
     },
     "widget": {
-      "template": "https://example.com/templates/dashboard-widget"
+      "template": "example.com/templates/dashboard-widget"
     }
   },
   "revenue": 48200,
@@ -349,12 +349,12 @@ Cache-Control: public, max-age=3600
 ETag: "v2-dashboard"
 
 {
-  "template": "https://example.com/templates/dashboard",
+  "template": "example.com/templates/dashboard",
   "slots": { "..." : "..." }
 }
 ```
 
-Template URLs themselves are also cacheable resources. Clients SHOULD cache resolved templates according to their HTTP caching headers.
+Template URIs themselves are also cacheable resources. Clients SHOULD cache resolved templates according to their HTTP caching headers.
 
 ### 5.3 Versioning
 
@@ -371,13 +371,15 @@ Servers MUST NOT use the media type `version` parameter to version individual vi
 
 ### 5.4 URL Resolution
 
-Template URLs in a view descriptor MAY be relative references (RFC 3986 Section 4.2). Clients MUST resolve relative URLs against a base URL determined by the transport that delivered the descriptor:
+A template URI MAY be written as (a) an **absolute URI** carrying a scheme (e.g. `https://example.com/templates/card`); (b) an **RFC 3986 relative reference** that begins with `/` (path-absolute) or `//` (network-path); or (c) a **scheme-less, host-qualified opaque identifier** that does not begin with `/` (e.g. `example.com/templates/card`).
+
+Forms (a) and (c) are the template's identity as written. For form (b), clients MUST resolve the reference against a base URL determined by the transport that delivered the descriptor:
 
 1. **Standalone view descriptor resource**: The URL of the view descriptor resource itself (i.e., the URL used to fetch it via the `Link` header).
 2. **Inline transport** (`_view` / `_views`): The URL of the API response containing the view descriptor.
 3. **`View-Template` header**: The URL of the API response carrying the header.
 
-Nested slot template URLs resolve against the same base URL as the root template URL — the base does not change at each nesting level.
+Nested slot template URIs resolve against the same base URL as the root template URI — the base does not change at each nesting level.
 
 **Example:**
 
@@ -396,11 +398,11 @@ Given an API response at `https://example.com/api/dashboard` with an inline view
 }
 ```
 
-Both template URLs resolve against `https://example.com/api/dashboard`:
+Both template URIs resolve against `https://example.com/api/dashboard`:
 - `/templates/layouts/sidebar` → `https://example.com/templates/layouts/sidebar`
 - `/templates/components/card` → `https://example.com/templates/components/card`
 
-Note that resolution follows RFC 3986 exactly: a reference without a leading slash resolves relative to the base URL's path, so `templates/components/card` would yield `https://example.com/api/templates/components/card` instead.
+A scheme-less reference that does **not** begin with `/` is **not** resolved against the base URL. Such a value (e.g. `example.com/templates/card`) is an opaque, host-qualified template identifier: it names the template directly and is compared and cached verbatim. A client supplies a scheme and transport only if and when it fetches the template over the network (Section 6.3); any such retrieval MUST use HTTPS (Section 10).
 
 Servers SHOULD use absolute URLs when view descriptors may be consumed by multiple clients with different base URL contexts.
 
@@ -440,16 +442,16 @@ Not every insertion point in a template needs to appear in the view descriptor. 
 
 ### 6.3 Template Sources
 
-A template URL names *which* template renders a slot. Deliberately, VDP does not define where the template's source text comes from: the URL is an identifier first — a stable name and namespace for the template, much like a package import path — and the key under which the client caches it. How a client turns that identifier into template source text is a deployment decision, outside the protocol.
+A template URI names *which* template renders a slot. Deliberately, VDP does not define where the template's source text comes from: the URI is an identifier first — a stable name and namespace for the template, much like a package import path — and the key under which the client caches it. How a client turns that identifier into template source text is a deployment decision, outside the protocol.
 
-A client MAY satisfy a template URL from any source, including:
+A client MAY satisfy a template URI from any source, including:
 
 - templates bundled into the application package (typical for mobile and desktop clients);
 - templates shipped with the page itself (for browsers — e.g., `<template>` elements delivered with the initial HTML);
 - a store local to the BFF, or a dedicated template service;
-- a network fetch of the template URL itself.
+- a network fetch of the template URI itself.
 
-All of these are equally conforming. Whatever the source, the client MUST select templates by the absolute URL produced by the Section 5.4 resolution rules — the URL is the template's identity, so a template satisfied from a local source is indistinguishable, to the rest of the resolution algorithm, from a fetch whose cache was already warm (Section 5.2). Fetching the URL over the network is the interoperable default when no local source provides the template, and every network retrieval is subject to Section 10.
+All of these are equally conforming. Whatever the source, the client MUST select templates by the template identity determined by Section 5.4 — the absolute URL for references that are resolved, or the opaque identifier exactly as written for scheme-less values — so a template satisfied from a local source is indistinguishable, to the rest of the resolution algorithm, from a fetch whose cache was already warm (Section 5.2). Fetching the URL over the network is the interoperable default when no local source provides the template, and every network retrieval is subject to Section 10.
 
 The `integrity` member (Section 3.6) authenticates template content obtained from outside the client's trust boundary. A client MAY skip integrity verification for templates satisfied from its own bundle; when integrity metadata is present, it MUST verify any template it fetches over the network (Section 3.6).
 
@@ -462,7 +464,7 @@ The `integrity` member (Section 3.6) authenticates template content obtained fro
 ```http
 HTTP/1.1 200 OK
 Content-Type: application/json
-View-Template: https://example.com/templates/components/forms/form
+View-Template: example.com/templates/components/forms/form
 
 {
   "csrfToken": "abc123",
@@ -498,22 +500,22 @@ Link: <https://example.com/views/dashboard.json>; rel="view-descriptor"
 
 ```json
 {
-  "template": "https://example.com/templates/layouts/sidebar",
+  "template": "example.com/templates/layouts/sidebar",
   "slots": {
     "sidebarNav": {
-      "template": "https://example.com/templates/components/navigation/nav"
+      "template": "example.com/templates/components/navigation/nav"
     },
     "mainContent": {
-      "template": "https://example.com/templates/demos/dashboard",
+      "template": "example.com/templates/demos/dashboard",
       "slots": {
         "statsCards": {
-          "template": "https://example.com/templates/components/data-display/card"
+          "template": "example.com/templates/components/data-display/card"
         },
         "activityTable": {
-          "template": "https://example.com/templates/components/data-display/table"
+          "template": "example.com/templates/components/data-display/table"
         },
         "revenueChart": {
-          "template": "https://example.com/templates/components/charts/chart"
+          "template": "example.com/templates/components/charts/chart"
         }
       }
     }
@@ -545,18 +547,18 @@ Data payload is pure OData4. The view descriptor is communicated entirely via th
 {
   "_views": {
     "default": {
-      "template": "https://example.com/templates/product-detail",
+      "template": "example.com/templates/product-detail",
       "slots": {
         "gallery": {
-          "template": "https://example.com/templates/components/image-carousel"
+          "template": "example.com/templates/components/image-carousel"
         },
         "reviews": {
-          "template": "https://example.com/templates/components/review-list"
+          "template": "example.com/templates/components/review-list"
         }
       }
     },
     "compact": {
-      "template": "https://example.com/templates/product-card"
+      "template": "example.com/templates/product-card"
     }
   },
   "id": 42,
@@ -605,7 +607,7 @@ Clients and BFFs resolving view descriptors MUST handle failures gracefully. The
 
 ### 9.1 Template Fetch Failures
 
-When fetching a template URL fails (HTTP 404, 5xx, network error, timeout):
+When fetching a template URI fails (HTTP 404, 5xx, network error, timeout):
 
 - Clients MUST NOT fail the entire render if a single slot's template is unavailable.
 - Clients SHOULD skip the unavailable slot and render the remaining template tree.
@@ -644,20 +646,20 @@ Error handling follows the principle that a failure stays as local as possible:
 
 ## 10. Security Considerations
 
-The requirements in this section govern templates and descriptors **retrieved over a network**. A client that satisfies template URLs from a source inside its own trust boundary (Section 6.3) — an application bundle, templates shipped with the page, a BFF-local store — need not apply them to those templates; any retrieval that does cross the network remains subject to them in full.
+The requirements in this section govern templates and descriptors **retrieved over a network**. A client that satisfies template URIs from a source inside its own trust boundary (Section 6.3) — an application bundle, templates shipped with the page, a BFF-local store — need not apply them to those templates; any retrieval that does cross the network remains subject to them in full.
 
-- **Template URL validation**: Clients MUST validate template URLs against an allowlist of trusted URL prefixes. Rendering arbitrary templates from untrusted sources is a code injection risk. The allowlist is determined by the first available source below:
+- **Template URI validation**: Clients MUST validate template URIs against an allowlist of trusted URL prefixes. Rendering arbitrary templates from untrusted sources is a code injection risk. The allowlist is determined by the first available source below:
   1. **Local configuration** — an allowlist configured in the client or its deployment. When present, it takes precedence over anything the server advertises.
   2. **Discovery document** — the `trustedTemplateUrls` member of the API's discovery document (Section 13.2), when one is available.
-  3. **Same-origin default** — when neither of the above is available, only template URLs sharing an origin ([RFC 6454](https://www.rfc-editor.org/rfc/rfc6454)) with the view descriptor's base URL (Section 5.4) are trusted.
+  3. **Same-origin default** — when neither of the above is available, only template URIs sharing an origin ([RFC 6454](https://www.rfc-editor.org/rfc/rfc6454)) with the view descriptor's base URL (Section 5.4) are trusted.
 
   Matching semantics for allowlist entries are defined in Section 13.2.
-- **Descriptor reference validation**: URLs in descriptor references (Section 3.7) SHOULD be validated with the same allowlist chain as template URLs. (Referenced descriptors only *select* templates, and those template URLs are themselves validated — but restricting where descriptors may be fetched from reduces attack surface.)
-- **Template integrity**: Servers SHOULD provide `integrity` metadata (Section 3.6) for templates hosted on infrastructure outside their control, such as third-party CDNs. The allowlist authenticates the origin of a template URL; integrity metadata authenticates the template content itself.
+- **Descriptor reference validation**: URLs in descriptor references (Section 3.7) SHOULD be validated with the same allowlist chain as template URIs. (Referenced descriptors only *select* templates, and those template URIs are themselves validated — but restricting where descriptors may be fetched from reduces attack surface.)
+- **Template integrity**: Servers SHOULD provide `integrity` metadata (Section 3.6) for templates hosted on infrastructure outside their control, such as third-party CDNs. The allowlist authenticates the origin of a template URI; integrity metadata authenticates the template content itself.
 - **CORS**: Template resources served cross-origin MUST include appropriate CORS headers.
 - **Content Security Policy**: Browser clients fetching templates at runtime SHOULD include template origins in the `connect-src` CSP directive. `script-src` or `style-src` apply only where templates are loaded as executable scripts or stylesheets.
 - **Template sandboxing**: Clients SHOULD render templates in a sandboxed context to prevent template injection attacks.
-- **HTTPS**: Templates retrieved over a network MUST be retrieved via HTTPS. Clients SHOULD reject fetching `http:` template URLs, with an exception permitted for loopback addresses during local development.
+- **HTTPS**: Templates retrieved over a network MUST be retrieved via HTTPS. Clients SHOULD reject fetching `http:` template URIs, with an exception permitted for loopback addresses during local development.
 
 ## 11. Relationship to Existing Standards
 
@@ -665,7 +667,7 @@ The requirements in this section govern templates and descriptors **retrieved ov
 |----------|-------------|
 | REST | VDP extends REST responses with view metadata without modifying the resource representation itself |
 | HAL (RFC draft) | VDP uses HAL's underscore convention (`_view`) for inline transport. Compatible with `_links` and `_embedded` |
-| JSON-LD | VDP can coexist with `@context`/`@type` annotations. Template URLs could be expressed as JSON-LD `@id` values |
+| JSON-LD | VDP can coexist with `@context`/`@type` annotations. Template URIs could be expressed as JSON-LD `@id` values |
 | OData4 | VDP uses OData4 instance annotations (`@View.descriptor`) or HTTP headers for compatibility |
 | [RFC 8288](https://www.rfc-editor.org/rfc/rfc8288) (Web Linking) | VDP defines the `view-descriptor` link relation type for the `Link` header |
 | HATEOAS | VDP is complementary — HATEOAS tells clients what actions are available, VDP tells clients how to render the result |
@@ -779,7 +781,7 @@ Each entry in `endpoints` maps an API path to the URL of its view descriptor res
 
 The `endpoints` member is intentionally aligned in spirit with [RFC 9264](https://www.rfc-editor.org/rfc/rfc9264) (Linkset): each entry expresses a `view-descriptor` link (Section 12.1) whose context is the API path and whose target is the descriptor URL. Linkset itself is not used because it defines no document-level members for metadata such as `version` and `trustedTemplateUrls`. A future version of this specification may additionally offer the same links as `application/linkset+json`.
 
-The `trustedTemplateUrls` field provides the template URL allowlist referenced in Section 10. Each entry is a URL prefix: a template URL is trusted if and only if, after RFC 3986 normalization, it begins with one of the listed entries. Entries SHOULD end with a trailing slash so that `https://example.com/templates/` cannot accidentally match `https://example.com/templates-evil/`, and a host-only entry like `https://example.com/` cannot accidentally match `https://example.com.evil.host/`.
+The `trustedTemplateUrls` field provides the template URI allowlist referenced in Section 10. Each entry is a URL prefix: a template URI is trusted if and only if, after RFC 3986 normalization, it begins with one of the listed entries. Entries SHOULD end with a trailing slash so that `https://example.com/templates/` cannot accidentally match `https://example.com/templates-evil/`, and a host-only entry like `https://example.com/` cannot accidentally match `https://example.com.evil.host/`.
 
 **Extensibility:** Clients MUST ignore members of the discovery document — including members of `endpoints` entries — that they do not recognize. Future versions of this specification may define additional members.
 
@@ -816,8 +818,8 @@ In interactive applications, a client may re-request data for a subset of the pa
 
 Clients MAY optimize rendering by comparing previous and current view descriptors:
 
-1. If a slot's template URL has not changed, the cached template can be reused.
-2. Only slots with changed template URLs or changed data need re-fetching and re-rendering.
+1. If a slot's template URI has not changed, the cached template can be reused.
+2. Only slots with changed template URIs or changed data need re-fetching and re-rendering.
 3. The view descriptor's template tree structure provides natural boundaries for incremental updates.
 
 This is a client-side optimization, not a protocol requirement. VDP does not mandate any diffing or caching behavior.
@@ -832,7 +834,7 @@ HX-Request: true
 
 HTTP/1.1 200 OK
 Content-Type: application/json
-View-Template: https://example.com/templates/components/stats-row
+View-Template: example.com/templates/components/stats-row
 
 {"revenue": 52400, "users": 1923, "orders": 347}
 ```
@@ -880,9 +882,9 @@ An HTTP server that produces view descriptors. A conforming VDP Server:
 
 - MUST emit view descriptors that are valid per the formal grammar (Section 3.8) — equivalently, that validate against the published JSON Schema.
 - MUST deliver descriptors via at least one of the transports in Section 4, following that transport's rules, including emitting at most one `Link` value with `rel="view-descriptor"` per response (Section 4.4).
-- MUST use HTTPS template URLs, except for loopback addresses during local development (Section 10).
+- MUST use HTTPS when retrieving templates over the network, except for loopback addresses during local development (Section 10). Template identifiers themselves MAY be scheme-less; the requirement is on the transport used to fetch them.
 - SHOULD serve standalone view descriptor resources as `application/vdp+json` with standard caching headers (Sections 5.1–5.2).
-- SHOULD use absolute template URLs when descriptors may be consumed from multiple base URL contexts (Section 5.4).
+- SHOULD use absolute template URIs when descriptors may be consumed from multiple base URL contexts (Section 5.4).
 - SHOULD advertise VDP support via the discovery mechanisms of Section 13; if it publishes a discovery document, that document MUST be valid per Section 13.2 and SHOULD be served as `application/vdp-discovery+json`.
 
 ### 15.2 VDP Client

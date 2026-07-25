@@ -23,10 +23,10 @@
     },
     "trustedTemplateUrls": {
       "type": "array",
-      "description": "Template URL allowlist (spec Section 10). Each entry is a URL prefix; entries SHOULD end with a trailing slash.",
+      "description": "Template URI allowlist (spec Section 10). Each entry is a URL prefix; entries SHOULD end with a trailing slash.",
       "items": {
         "type": "string",
-        "format": "uri",
+        "format": "uri-reference",
         "minLength": 1
       }
     }

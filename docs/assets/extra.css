@@ -63,6 +63,18 @@
   margin-top: 0;
 }
 
+/* On very wide screens the auto-fit grid packs all six cards into one
+   narrow row. Break the grid out of the centered content column and lock
+   it to three roomier columns so the cards get wider. */
+@media screen and (min-width: 2000px) {
+  .md-typeset .vdp-features {
+    width: min(1500px, 80vw);
+    margin-left: 50%;
+    transform: translateX(-50%);
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
 /* Quick links */
 .md-typeset .vdp-links {
   display: flex;
@@ -93,4 +105,30 @@
 [data-md-color-scheme="slate"] .md-typeset .vdp-links a.secondary {
   border-color: var(--md-accent-fg-color);
   color: var(--md-accent-fg-color);
+}
+
+/* glightbox lightbox: the D2 diagram SVGs have no width/height on their root
+   <svg> (only a viewBox), so their intrinsic size is the CSS 300x150 default.
+   glightbox reads that natural size and INLINE-sets max-width/max-height on the
+   <img> to it, capping the SVG at ~300px. Inline styles beat normal stylesheet
+   rules, so we must use !important to lift the caps and size the diagram to the
+   viewport (aspect ratio preserved via the viewBox). Scoped to .svg so raster
+   images like the logo keep glightbox's natural-size behavior. */
+.glightbox-container .gslide-image img[src*=".svg"] {
+  width: min(92vw, 1500px) !important;
+  height: auto !important;
+  max-width: 92vw !important;
+  max-height: 88vh !important;
+  object-fit: contain !important;
+}
+
+/* glightbox + Material light/dark image pairs: Material hides the inactive
+   scheme's <img> (#only-light / #only-dark) but leaves its wrapping
+   <a class="glightbox"> in place, so the lightbox can open the wrong variant
+   (e.g. the light diagram while the site is in dark mode). Hide the entire
+   anchor for the inactive scheme so only the current theme's image is
+   clickable and is what opens in the lightbox. */
+[data-md-color-scheme="slate"] a.glightbox:has(img[src$="#only-light"]),
+[data-md-color-scheme="default"] a.glightbox:has(img[src$="#only-dark"]) {
+  display: none;
 }
