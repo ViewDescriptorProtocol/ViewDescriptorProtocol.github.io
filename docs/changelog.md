@@ -2,9 +2,15 @@
 
 All notable changes to the View Descriptor Protocol (VDP) specification are documented in this file.
 
-The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). The specification is in early working draft; entries below track changes to the v0.1 draft until its first tagged release.
+The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). The specification is in early working draft; entries below track the evolution of the v0.1 draft.
 
-## [0.1.0] — Working Draft (unreleased)
+## [Unreleased]
+
+Nothing yet.
+
+## [0.1.0-alpha] — 2026-07-28
+
+First tagged release of the working draft.
 
 ### Added
 
@@ -14,6 +20,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Changed
 
+- 2026-07-24 — Template identifiers are now URI-references: the schema's `template` and discovery `trustedTemplateUrls` values changed from `format: uri` to `format: uri-reference`, and the `$defs` type was renamed `TemplateURL` → `TemplateURI`. Section 5.4 defines three identifier forms — absolute URI, RFC 3986 relative reference, and scheme-less opaque identifier (e.g. `example.com/templates/card`, host-qualified, NOT resolved as a relative reference) — with the HTTPS requirement scoped to network retrieval. "Template URL" renamed to "template URI" throughout the specification, and the example template values and discovery allowlist are now scheme-less.
 - 2026-07-21 — New Section 6.3 (Template Sources) makes explicit that a template URL is an identifier first and a fetchable location only secondarily: clients MAY satisfy template URLs from any source — an application bundle, templates shipped with the page, a BFF-local store or template service, or a network fetch — all equally conforming, with the absolute URL (Section 5.4) as the template's identity and cache key. The Section 2 Template URL definition, Section 8 algorithm ("obtain" rather than "fetch" templates), Section 10 (its requirements now explicitly scoped to network retrieval), Section 15.2 client conformance, and the schema's TemplateURL description were aligned accordingly.
 - 2026-07-21 — All example template URLs consolidated onto a single host: `https://example.com/templates/...` replaces the `templates.example.com` subdomain throughout the specification and examples. Template URLs are identifiers first; a dedicated template host in every example suggested a deployment choice (a separate template server) that the protocol does not make.
 - 2026-07-21 — JSON Schemas upgraded from draft-07 to the [JSON Schema 2020-12](https://json-schema.org/specification-links#2020-12) dialect (`$schema` is now `https://json-schema.org/draft/2020-12/schema`). The schemas already used the post-draft-07 `$defs` keyword, so the declared dialect now matches the keywords in use; no other schema changes were needed. CI and local validation pass `--spec=draft2020` to ajv. The archived RVST schemas remain draft-07.
@@ -39,6 +46,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 ### Deprecated
 
 - RVST (Representational View State Transfer), VDP's predecessor, is archived in this repository: schemas under `schemas/`, examples under `examples/example-*.json`, the unfinished HAL variant draft as `examples/rvst-hal-draft.json`, and documentation under `docs/archive/`. The VDP specification supersedes RVST.
+
+[Unreleased]: https://github.com/ViewDescriptorProtocol/VDP/compare/v0.1.0-alpha...HEAD
+[0.1.0-alpha]: https://github.com/ViewDescriptorProtocol/VDP/releases/tag/v0.1.0-alpha
 
 *[VDP]: View Descriptor Protocol
 *[HAL]: Hypertext Application Language
