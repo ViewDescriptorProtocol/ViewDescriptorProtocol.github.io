@@ -10,7 +10,7 @@ hide:
 
 # View Descriptor Protocol
 
-<p class="vdp-tagline">Server-driven template binding for any client</p>
+<p class="vdp-tagline">One JSON descriptor tells every client which templates render which data</p>
 
 <div class="vdp-links" markdown>
 [Read the Spec](specification.md){ .primary }
@@ -114,7 +114,7 @@ A VDP view descriptor tells the client to render a sidebar layout, filling its s
 
 ## Status
 
-VDP is in **early working draft** stage (v0.1, alpha). The specification is being actively developed.
+VDP is an **early working draft** (v0.1, alpha). The specification is feature-complete for v0.1 and the [Go demo](https://github.com/ViewDescriptorProtocol/golang-vdp-demo) implements it end to end; feedback and implementations are welcome.
 
 <div class="vdp-links" markdown>
 [GitHub Organization](https://github.com/ViewDescriptorProtocol){ .secondary }

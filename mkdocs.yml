@@ -1,6 +1,6 @@
 site_name: View Descriptor Protocol
 site_url: https://vdprotocol.org
-site_description: Server-driven template binding for cross-platform UI rendering
+site_description: One JSON descriptor tells every client which templates render which data
 site_author: ViewDescriptorProtocol
 
 repo_url: https://github.com/ViewDescriptorProtocol/VDP
