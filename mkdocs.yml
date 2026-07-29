@@ -45,6 +45,7 @@ extra_css:
 nav:
   - Home: index.md
   - Specification: specification.md
+  - Implementers Guide: implementers-guide.md
   - Schema: schema.md
   - Examples: examples.md
   - Deployment Scenarios: deployment-scenarios.md

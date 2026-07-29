@@ -117,6 +117,7 @@ A VDP view descriptor tells the client to render a sidebar layout, filling its s
 VDP is an **early working draft** (v0.1, alpha). The specification is feature-complete for v0.1 and the [Go demo](https://github.com/ViewDescriptorProtocol/golang-vdp-demo) implements it end to end; feedback and implementations are welcome.
 
 <div class="vdp-links" markdown>
+[Implementers Guide](implementers-guide.md){ .secondary }
 [GitHub Organization](https://github.com/ViewDescriptorProtocol){ .secondary }
 [JSON Schema](schema.md){ .secondary }
 </div>
