@@ -24,7 +24,7 @@ REST APIs return structured data (JSON, XML) that carries no presentation inform
 
 ## 2. Terminology
 
-- **View Descriptor**: A JSON object that describes a template tree — a root template URI and its slot assignments.
+- **View Descriptor**: A JSON ([RFC 8259](https://www.rfc-editor.org/rfc/rfc8259)) object that describes a template tree — a root template URI and its slot assignments.
 - **Template URI**: A URI (Uniform Resource *Identifier*) that names a template. It is an **identity first** — a stable name and namespace for the template, and the key under which the client caches it — and a fetchable *location* only secondarily (Section 6.3). Through whatever source the deployment uses, it MUST resolve to a renderable template in the client's rendering framework.
 - **Slot**: A named insertion point in a template where a sub-template can be composed. Slot names correspond to the template's own insertion point identifiers (e.g., Qute's `{#insert slotName}`).
 - **View Descriptor Resource**: A standalone JSON document containing a view descriptor, addressable by its own URL, cacheable independently of the data it describes.
@@ -340,7 +340,7 @@ Content-Type: application/vdp+json
 
 ### 5.2 Caching
 
-View descriptor resources are independently cacheable. Servers SHOULD provide standard HTTP caching headers:
+View descriptor resources are independently cacheable. Servers SHOULD provide standard HTTP caching headers ([RFC 9111](https://www.rfc-editor.org/rfc/rfc9111)):
 
 ```http
 HTTP/1.1 200 OK
@@ -644,6 +644,24 @@ Error handling follows the principle that a failure stays as local as possible:
 2. A root template failure prevents rendering entirely — the client falls back to raw data or a default template.
 3. Clients SHOULD provide a consistent fallback experience (e.g., a standard error component) rather than rendering nothing.
 
+### 9.5 Server Error Responses
+
+The preceding subsections govern how clients handle failures; this subsection covers how servers report them. When a request for a resource defined by this specification — a standalone view descriptor resource (Section 5) or a discovery document (Section 13.2) — results in an error, the server SHOULD respond with a problem details object ([RFC 9457](https://www.rfc-editor.org/rfc/rfc9457)) rather than an unstructured body:
+
+```http
+HTTP/1.1 404 Not Found
+Content-Type: application/problem+json
+
+{
+  "type": "about:blank",
+  "title": "Not Found",
+  "status": 404,
+  "detail": "No view descriptor exists for revision v3 of the dashboard view."
+}
+```
+
+Problem details make error responses machine-readable; they do not change client-side handling. A client that receives an error when fetching a descriptor or template applies Sections 9.1–9.3 regardless of whether the error body is a problem details object. Whether the data API uses problem details for its own error responses is out of VDP's scope, though doing so is consistent with this section.
+
 ## 10. Security Considerations
 
 The requirements in this section govern templates and descriptors **retrieved over a network**. A client that satisfies template URIs from a source inside its own trust boundary (Section 6.3) — an application bundle, templates shipped with the page, a BFF-local store — need not apply them to those templates; any retrieval that does cross the network remains subject to them in full.
@@ -670,6 +688,7 @@ The requirements in this section govern templates and descriptors **retrieved ov
 | JSON-LD | VDP can coexist with `@context`/`@type` annotations. Template URIs could be expressed as JSON-LD `@id` values |
 | OData4 | VDP uses OData4 instance annotations (`@View.descriptor`) or HTTP headers for compatibility |
 | [RFC 8288](https://www.rfc-editor.org/rfc/rfc8288) (Web Linking) | VDP defines the `view-descriptor` link relation type for the `Link` header |
+| [RFC 9457](https://www.rfc-editor.org/rfc/rfc9457) (Problem Details) | VDP servers report errors on descriptor and discovery resources as `application/problem+json` (Section 9.5) |
 | HATEOAS | VDP is complementary — HATEOAS tells clients what actions are available, VDP tells clients how to render the result |
 
 ## 12. IANA Considerations
@@ -906,6 +925,38 @@ A backend-for-frontend that resolves descriptors server-side and delivers render
 - MUST meet all VDP Client requirements (Section 15.2) in its role as a consumer of upstream APIs.
 - MAY cache resolved templates and descriptors per their HTTP caching headers (Section 5.2).
 - Is unconstrained by this specification in the interface it exposes to its own clients — the rendered output (HTML or otherwise) is out of VDP's scope.
+
+## 16. References
+
+### 16.1 RFCs
+
+| RFC | Title | Use in this specification |
+|-----|-------|---------------------------|
+| [RFC 2119](https://www.rfc-editor.org/rfc/rfc2119) | Key words for use in RFCs to Indicate Requirement Levels | Requirement keywords (MUST, SHOULD, MAY) — Section 2 |
+| [RFC 8174](https://www.rfc-editor.org/rfc/rfc8174) | Ambiguity of Uppercase vs Lowercase in RFC 2119 Key Words | Keywords are normative only in all capitals — Section 2 |
+| [RFC 3986](https://www.rfc-editor.org/rfc/rfc3986) | Uniform Resource Identifier (URI): Generic Syntax | Template URI forms and relative reference resolution — Sections 3.8, 5.4, 13.2 |
+| [RFC 6454](https://www.rfc-editor.org/rfc/rfc6454) | The Web Origin Concept | Same-origin default of the template trust chain — Section 10 |
+| [RFC 6570](https://www.rfc-editor.org/rfc/rfc6570) | URI Template | Level 1 templates as discovery `endpoints` keys — Section 13.2 |
+| [RFC 6648](https://www.rfc-editor.org/rfc/rfc6648) | Deprecating the "X-" Prefix and Similar Constructs in Application Protocols | Why the platform header is `VDP-Platform`, not `X-VDP-Platform` — Section 5.5 |
+| [RFC 6838](https://www.rfc-editor.org/rfc/rfc6838) | Media Type Specifications and Registration Procedures | The `type` metadata member; media type registrations — Sections 3.6, 12 |
+| [RFC 6839](https://www.rfc-editor.org/rfc/rfc6839) | Additional Media Type Structured Syntax Suffixes | The `+json` suffix of the VDP media types — Section 12.3 |
+| [RFC 8259](https://www.rfc-editor.org/rfc/rfc8259) | The JavaScript Object Notation (JSON) Data Interchange Format | The view descriptor document format — Section 2 |
+| [RFC 8288](https://www.rfc-editor.org/rfc/rfc8288) | Web Linking | `Link` header transport and the `view-descriptor` relation type — Sections 4.1, 12.1 |
+| [RFC 8615](https://www.rfc-editor.org/rfc/rfc8615) | Well-Known Uniform Resource Identifiers (URIs) | The `/.well-known/vdp` discovery document — Sections 12.4, 13.2 |
+| [RFC 9110](https://www.rfc-editor.org/rfc/rfc9110) | HTTP Semantics | Header field semantics, field order, field name registry — Sections 4.4, 12.5 |
+| [RFC 9111](https://www.rfc-editor.org/rfc/rfc9111) | HTTP Caching | Caching of descriptor and template resources — Section 5.2 |
+| [RFC 9264](https://www.rfc-editor.org/rfc/rfc9264) | Linkset: Media Types and a Link Relation Type for Link Sets | Design alignment of the discovery `endpoints` member — Section 13.2 |
+| [RFC 9457](https://www.rfc-editor.org/rfc/rfc9457) | Problem Details for HTTP APIs | Error responses for descriptor and discovery resources — Section 9.5 |
+
+### 16.2 Other Standards
+
+| Standard | Use in this specification |
+|----------|---------------------------|
+| [W3C Subresource Integrity](https://www.w3.org/TR/SRI/) | Format of the `integrity` metadata member — Section 3.6 |
+| [JSON Schema 2020-12](https://json-schema.org/specification-links#2020-12) | Dialect of the published VDP schemas — Section 15.1 |
+| [HAL (draft-kelly-json-hal)](https://datatracker.ietf.org/doc/html/draft-kelly-json-hal) | Underscore convention for inline transport (`_view`, `_links`, `_embedded`) — Sections 4.2, 11 |
+| [OData Version 4.0](https://www.odata.org/documentation/) | Instance annotation transport (`@View.descriptor`) — Section 4.3 |
+| [OpenAPI Specification](https://spec.openapis.org/oas/latest.html) | The `x-vdp` extension for advertising descriptors — Section 13.3 |
 
 ---
 

@@ -6,7 +6,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
-Nothing yet.
+### Added
+
+- 2026-07-29 — New Section 9.5 (Server Error Responses): servers SHOULD report errors on view descriptor resources and discovery documents as [RFC 9457](https://www.rfc-editor.org/rfc/rfc9457) problem details (`application/problem+json`); client-side handling in Sections 9.1–9.4 is unchanged. A corresponding row was added to the Section 11 standards table.
+- 2026-07-29 — New Section 16 (References): a table of every RFC the specification relies on, with the sections that use each, and a second table of the non-RFC standards cited (W3C Subresource Integrity, JSON Schema 2020-12, HAL, OData 4.0, OpenAPI). Citations added where standards were used but uncited: RFC 8259 (JSON) in Section 2 and RFC 9111 (HTTP Caching) in Section 5.2.
 
 ## [0.1.0-alpha] — 2026-07-28
 
