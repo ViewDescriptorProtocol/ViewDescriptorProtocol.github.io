@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [0.2.0-alpha] — 2026-08-03
+
+Second tagged release of the working draft: the protocol version moves to 0.2, adding one member — `transform` — plus its supporting rules.
+
 ### Added
 
 - 2026-08-03 — **The `transform` member** (new Section 3.8): an optional, declarative mapping on any view descriptor node that adapts the API response representation into the JSON model the node's template expects. Nine grammar productions over [RFC 6901](https://www.rfc-editor.org/rfc/rfc6901) JSON Pointers — Pointer, Mapping, List, `$map`/`$to` projection, `$entries`, `$get`/`$default`, `$count`, `$merge`, and the `$mapper` escape hatch referencing client-registered mapping code (an identifier matched verbatim, never fetched). Every node's transform is evaluated against the original response representation, never an ancestor's output (independent projection); no transform means the template receives the representation unchanged; when a transform is present the template receives exactly its result. Inline transform support is REQUIRED for client conformance, `$mapper` support OPTIONAL. The formal grammar moved to Section 3.9 and covers the transform productions; Section 3.7 now recommends that referenced descriptors stay transform-free. **Note:** earlier design discussion used `"transform": "<string>"` to mean a jq expression. In the final design a string is an RFC 6901 JSON Pointer and an object is a mapping — same syntax, different semantics.
@@ -61,7 +65,8 @@ First tagged release of the working draft.
 
 - RVST (Representational View State Transfer), VDP's predecessor, is archived in this repository: schemas under `schemas/`, examples under `examples/example-*.json`, the unfinished HAL variant draft as `examples/rvst-hal-draft.json`, and documentation under `docs/archive/`. The VDP specification supersedes RVST.
 
-[Unreleased]: https://github.com/ViewDescriptorProtocol/VDP/compare/v0.1.0-alpha...HEAD
+[Unreleased]: https://github.com/ViewDescriptorProtocol/VDP/compare/v0.2.0-alpha...HEAD
+[0.2.0-alpha]: https://github.com/ViewDescriptorProtocol/VDP/releases/tag/v0.2.0-alpha
 [0.1.0-alpha]: https://github.com/ViewDescriptorProtocol/VDP/releases/tag/v0.1.0-alpha
 
 *[VDP]: View Descriptor Protocol
