@@ -50,6 +50,28 @@ npx ajv-cli test --spec=draft2020 \
   -s vdp.v0-2.schema.json -d 'views/*.json' --valid -c ajv-formats
 ```
 
+**Adapt data with transforms (0.2).** When a response's shape differs from a
+template's model, declare a [`transform`](specification.md#38-transforms) on
+that node — RFC 6901 pointers reshaping the representation into the contract
+the template URI implies:
+
+```json
+{
+  "template": "example.com/templates/data-table",
+  "transform": { "heading": "/dataset/title", "rows": "/data" }
+}
+```
+
+Keep two rules in mind. The transform belongs to the *descriptor node*, never
+to the template — the same template URI must mean the same model everywhere.
+And the grammar is deliberately just reshaping: filtering, derivation, and
+formatting stay in your handlers, your templates, or client-registered
+[`$mapper`](specification.md#383-mapper-references) code, whose URIs your
+[discovery document](specification.md#132-well-known-uri) should declare under
+`mappers`. Where you control the representation, prefer fixing its shape at
+the source over transforming it
+([Section 3.8.4](specification.md#384-when-not-to-transform)).
+
 ### 2. Choose an identifier form
 
 A template URI is an **identity first** — a stable name and cache key — and a
@@ -174,6 +196,8 @@ The digest is computed over the exact bytes clients will fetch —
 - [ ] Absolute template URIs where descriptors cross base-URL contexts
 - [ ] Discovery document valid per Section 13.2, served as `application/vdp-discovery+json`
 - [ ] Allowlist entries end with `/` and cover every identifier form emitted
+- [ ] Transforms valid per the Section 3.8.1 grammar; every `$mapper` URI declared in discovery
+
 
 ---
 
@@ -294,6 +318,17 @@ the principle **prefer partial rendering over total failure**
 - Only a **root** template failure fails the render — fall back to raw data or
   an error template.
 - Slot names with no matching insertion point are ignored (log them).
+- **Render per node (0.2).** A node with a
+  [`transform`](specification.md#38-transforms) receives exactly the transform
+  result; without one, the representation unchanged. Evaluate every node's
+  transform against the **original** response (with `_view`/`_views` stripped)
+  — never against an ancestor's output
+  ([Section 3.8.2](specification.md#382-evaluation-semantics)). Missing
+  pointers and wrong-type targets yield `null` and are *not* errors.
+- **Never render past a failed transform.** An unrecognized `$mapper` URI is a
+  slot failure; on the *root* node, show an error template only — falling back
+  to untransformed data would be silently wrong output, worse than an error
+  ([Section 9.6](specification.md#96-transform-failures)).
 - Impose a recursion depth limit (10 is the recommendation); descriptor
   references count toward it, and a reference chain that revisits a URL is a
   cycle that abandons just that slot.
@@ -310,7 +345,10 @@ and templates are ordinary HTTP resources, keyed by identity.
 - [ ] HTTPS enforced for network retrieval (loopback excepted)
 - [ ] `integrity` verified when present; mismatch treated as fetch failure
 - [ ] Partial rendering on slot failure; fallback on root failure; depth limit and cycle detection
-- [ ] Invalid descriptors rejected; unrecognized discovery members ignored
+- [ ] Invalid descriptors rejected — including malformed transforms and unrecognized members not prefixed `x-` (Section 3.10); unrecognized discovery members ignored
+- [ ] Inline transform evaluation implemented in full; `$mapper` optional, matched verbatim against your registry
+- [ ] Transforms evaluated against the original representation; templates receive exactly the transform result
+- [ ] JSON objects parsed order-preservingly where `$entries` results render
 
 ---
 
@@ -347,19 +385,25 @@ serves ready-made vectors — run it locally and point your client at:
 
 | Endpoint | Exercises | Your client should |
 |----------|-----------|--------------------|
-| `/api/dashboard` | Link transport, form (b) refs, §3.7 reference, integrity | Render a four-level tree |
+| `/api/dashboard` | Link transport, form (b) refs, §3.7 reference, integrity, per-slot transforms | Render a four-level tree, each node against its own model |
 | `/api/dashboard?fail=chart` | One slot's template 404s | Skip the slot, render the rest |
 | `/api/dashboard?fail=root` | Root template 404s | Fall back to raw data |
 | `/api/dashboard?fail=integrity` | SRI mismatch | Treat as fetch failure, skip the slot |
 | `/api/dashboard?untrusted` | Off-allowlist template | Reject **without fetching** |
 | `/api/odata/products` | Link + OData annotation, form (c) opaque identifier | Keep the identifier verbatim as cache key |
 | `/api/login` | `View-Template` shorthand | Render the single template |
-| `/api/products/42?view=compact` | Multiple named views | Select the requested view, default otherwise |
+| `/api/products/42?view=compact` | Multiple named views, per-view transform | Select the requested view, default otherwise |
+| `/api/summary` | `$mapper` transform, discovery `mappers` | Dispatch to registered mapper code |
+| `/api/summary?fail=mapper` | Unregistered `$mapper` on the root | Error template only — **never** the raw data (§9.4 rule 2) |
+| `/api/dashboard/stats` | Identity default — representation already matches the contract | Render with no transform declared |
 
 And remember what is deliberately **not** VDP's job — do not build it into
-your implementation: conditional slot logic, template parameters, and
-data-to-template field mapping all belong to the server's descriptor choice or
-the template engine, never to the protocol
+your implementation: conditional slot logic and template parameters belong to
+the server's descriptor choice or the template engine, never to the protocol.
+Data-to-template mapping *is* in scope as of 0.2, but only as declarative
+reshaping — if you find yourself wanting filtering, computation, or an
+expression language in a descriptor, that logic belongs server-side or in
+client-registered `$mapper` code
 ([Design Decisions](specification.md#design-decisions)).
 
 *[VDP]: View Descriptor Protocol
