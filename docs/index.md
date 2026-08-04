@@ -40,7 +40,7 @@ Without VDP, every client and BFF hardcodes its own copy of the same data-to-tem
 
 ### Template Binding
 
-Each API response carries a **view descriptor** — a compact JSON block that maps *which* template renders *which* data, using slots and template URIs. Templates handle the data binding themselves (Qute expressions, Mustache, Apache FreeMarker, JSONPath, etc.).
+Each API response carries a **view descriptor** — a compact JSON block that maps *which* template renders *which* data, using slots and template URIs, and optionally a per-node **transform** shaping the model each template receives. Templates handle the actual data binding themselves (Qute expressions, Mustache, Apache FreeMarker, JSONPath, etc.).
 
 </div>
 
@@ -114,7 +114,7 @@ A VDP view descriptor tells the client to render a sidebar layout, filling its s
 
 ## Status
 
-VDP is an **early working draft** (v0.1, alpha). The specification is feature-complete for v0.1 and the [Go demo](https://github.com/ViewDescriptorProtocol/golang-vdp-demo) implements it end to end; feedback and implementations are welcome.
+VDP is an **early working draft** (v0.2, alpha). The specification is feature-complete for v0.2 and the [Go demo](https://github.com/ViewDescriptorProtocol/golang-vdp-demo) implements it end to end; feedback and implementations are welcome.
 
 <div class="vdp-links" markdown>
 [Implementers Guide](implementers-guide.md){ .secondary }

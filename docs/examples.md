@@ -1,6 +1,6 @@
 # Examples
 
-These are the canonical VDP examples. Each validates against the [VDP v0.1 schema](schema.md).
+These are the canonical VDP examples. Each validates against the [VDP v0.2 schema](schema.md).
 
 ## Simple View Descriptor
 
@@ -153,3 +153,56 @@ The `mainContent` slot receives an array of three view descriptors. The client M
 3. `table`
 
 Each array element can itself contain nested `slots` for further composition.
+
+
+## Transforms
+
+Each node MAY declare a `transform` (Specification Section 3.8) adapting the response representation into the model its template expects. Every transform reads the **original** response — never an ancestor's transform output:
+
+```json title="vdp-transform.json"
+{
+  "template": "example.com/templates/layouts/sidebar",
+  "slots": {
+    "sidebarNav": {
+      "template": "example.com/templates/components/navigation/nav",
+      "transform": { "items": "/_links" }
+    },
+    "mainContent": {
+      "template": "example.com/templates/demos/dashboard",
+      "slots": {
+        "statsCards": {
+          "template": "example.com/templates/components/data-display/card",
+          "transform": {
+            "cards": {
+              "$entries": "/stats",
+              "$to": { "label": "/key", "value": "/value" }
+            }
+          }
+        },
+        "activityTable": {
+          "template": "example.com/templates/components/data-display/table",
+          "transform": {
+            "columns": { "$get": "/columns", "$default": ["user", "action", "item", "time"] },
+            "rows": "/recentActivity"
+          }
+        },
+        "revenueChart": {
+          "template": "example.com/templates/components/charts/chart",
+          "transform": { "labels": "/chartData/labels", "series": "/chartData/values" }
+        }
+      }
+    }
+  }
+}
+```
+
+The `card` template's contract is `{"cards": [{"label", "value"}]}` no matter which API feeds it. Nodes without a transform (the layout, the dashboard) receive the representation unchanged.
+
+Where declarative reshaping is not enough, a `$mapper` references mapping code the client has registered — an identifier matched verbatim, never fetched:
+
+```json title="vdp-transform-mapper.json"
+{
+  "template": "example.com/templates/data-table",
+  "transform": { "$mapper": "https://example.com/mappers/dataset-to-table" }
+}
+```

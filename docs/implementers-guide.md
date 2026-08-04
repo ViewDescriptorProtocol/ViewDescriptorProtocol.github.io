@@ -47,7 +47,7 @@ cheapest conformance test you will ever write:
 
 ```bash
 npx ajv-cli test --spec=draft2020 \
-  -s vdp.v0-1.schema.json -d 'views/*.json' --valid -c ajv-formats
+  -s vdp.v0-2.schema.json -d 'views/*.json' --valid -c ajv-formats
 ```
 
 ### 2. Choose an identifier form
@@ -110,7 +110,7 @@ HTTP/1.1 200 OK
 Content-Type: application/vdp+json
 Cache-Control: public, max-age=3600
 ETag: "v1-dashboard"
-VDP-Version: 0.1
+VDP-Version: 0.2
 ```
 
 Independent cacheability is the point: the descriptor changes when the
@@ -124,7 +124,7 @@ descriptors and learn your template allowlist:
 
 ```json
 {
-  "version": "0.1",
+  "version": "0.2",
   "endpoints": {
     "/api/dashboard":     { "descriptor": "/views/dashboard.json" },
     "/api/products/{id}": { "descriptor": "/views/product-detail.json" }
